@@ -1,10 +1,13 @@
 package de.tuhh.diss.plotbot;
 
+import javax.microedition.sensor.SensorListener;
+
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
+import lejos.nxt.SensorPortListener;
 import lejos.nxt.TouchSensor;
 
 public class Plotbot {
@@ -12,9 +15,9 @@ public class Plotbot {
 	private static MotorController armController = new MotorController(Motor.A, "arm",0.0166221,false);
 	private static MotorController wheelController = new MotorController(Motor.C, "wheel",0.0977384,false);
 	private static PositioningSystem GPS = new PositioningSystem(penController, armController, wheelController);
-	private static LightSensor lightSensor = new LightSensor(SensorPort.S3,false); //flood-light off
-	private static TouchSensor touchSensor = new TouchSensor(SensorPort.S1);
 	private static TouchSensor penSensor = new TouchSensor(SensorPort.S2);
+	private static TouchSensor armSensor = new TouchSensor(SensorPort.S1);
+	private static LightSensor lightSensor = new LightSensor(SensorPort.S3,false); //flood-light off
 	
 	public static void main(String[] args)
 	{
@@ -23,6 +26,13 @@ public class Plotbot {
 		Button.RIGHT.addButtonListener(Listeners.right);
 		Button.ENTER.addButtonListener(Listeners.enter);
 		Button.ESCAPE.addButtonListener(Listeners.escape);
+		SensorPort.S2.addSensorPortListener(Listeners.pen);
+		SensorPort.S1.addSensorPortListener(Listeners.arm);
+		SensorPort.S3.addSensorPortListener(Listeners.light);
+		//calibration
+		
+		
+		Button.ENTER.waitForPressAndRelease();
 		
 		// Some example code to check if the build process works
 		LCD.drawString("Hello", 0, 0);
@@ -37,22 +47,6 @@ public class Plotbot {
 		LCD.drawString("Next menu: Left",0,7);
 		
 		LCD.clear();
-		//LCD show be divided into:
-		//header
-		//content
-		
-		//calibration
-		//calibrate pen motor
-		//penController.calibrateZeroAndRange();
-		//calibrate arm motor
-		armController.calibrateZeroAndRange();
-		//calibrate wheel (not required)
-		//calibrate light
-		
-		//manual control
-		
-		//plotting task
-
 	}
 	
 	

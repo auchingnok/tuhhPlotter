@@ -6,6 +6,11 @@ import lejos.nxt.NXTRegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
 public class MotorController {
+	//motor controller have the following functions:
+	//setup max, min and zero position
+	//make sure the movement is within range
+	//enable multiple speed in manual drive mode
+	//
 	private String name = "";
 	private NXTRegulatedMotor motor;
 	private int maxTacho=0;
@@ -15,7 +20,7 @@ public class MotorController {
 	private double jacobian =0; //ratio of linear displacement to angular displacement
 	private boolean reverse = false;
 	private boolean lockMode = false;
-	
+	private boolean active = true; //become false if touch sensor pressed
 	
 	public MotorController(NXTRegulatedMotor refMotor, String refName, double refJacobian, boolean refReverse) {
 		motor = refMotor; 
@@ -37,6 +42,7 @@ public class MotorController {
 		
 		//same procedure for choosing the min and max value
 		//if zero is not between min and max, all values are set to zero
+		
 		motor.rotateTo(0);
 		motor.stop();
 		
@@ -106,6 +112,14 @@ public class MotorController {
 	
 	public void rotateTo(int target) {
 		if (isInRange(target)) {motor.rotateTo(target);};
+	}
+	
+	public void deactivate() 
+		active = false;
+	}
+	
+	public void activate() {
+		active = true;
 	}
 }
 	
