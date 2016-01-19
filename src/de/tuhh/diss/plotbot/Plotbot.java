@@ -11,9 +11,9 @@ import lejos.nxt.SensorPortListener;
 import lejos.nxt.TouchSensor;
 
 public class Plotbot {
-	private static MotorController penController = new MotorController(Motor.B,"pen",0,false);
-	private static MotorController armController = new MotorController(Motor.A, "arm",0.0166221,false);
-	private static MotorController wheelController = new MotorController(Motor.C, "wheel",0.0977384,false);
+	private static MotorController penController = new MotorController(Motor.B,0,false);
+	private static MotorController armController = new MotorController(Motor.A,0.0166221,false);
+	private static MotorController wheelController = new MotorController(Motor.C,0.0977384,false);
 	private static PositioningSystem GPS = new PositioningSystem(penController, armController, wheelController);
 	private static TouchSensor penSensor = new TouchSensor(SensorPort.S2);
 	private static TouchSensor armSensor = new TouchSensor(SensorPort.S1);
