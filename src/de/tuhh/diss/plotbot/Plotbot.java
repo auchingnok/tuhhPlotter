@@ -12,9 +12,10 @@ public class Plotbot {
 	private static MotorController penController = new MotorController(Motor.A,"pen",0);
 	private static MotorController armController = new MotorController(Motor.B, "arm",0.0166221);
 	private static MotorController wheelController = new MotorController(Motor.C, "wheel",0.0977384);
-	private static PositioningSystem GPS = new PositioningSystem();
-	private static LightSensor lightSensor = new LightSensor(SensorPort.S1,false); //flood-light off
-	private static TouchSensor touchSensor = new TouchSensor(SensorPort.S4);
+	private static PositioningSystem GPS = new PositioningSystem(penController, armController, wheelController);
+	private static LightSensor lightSensor = new LightSensor(SensorPort.S3,false); //flood-light off
+	private static TouchSensor touchSensor = new TouchSensor(SensorPort.S1);
+	private static TouchSensor penSensor = new TouchSensor(SensorPort.S2);
 	public static Listeners listeners = new Listeners(); //global listeners
 	
 	public static void main(String[] args)
@@ -26,16 +27,17 @@ public class Plotbot {
 		LCD.clear();
 		//display menu to choose
 		
-		//calibration
-		//test 
+		//LCD show be divided into:
+		//header
+		//content
 		
+		//calibration
 		//calibrate pen motor
 		penController.calibrateZeroAndRange();
 		//calibrate arm motor
 		armController.calibrateZeroAndRange();
 		//calibrate wheel (not required)
 		//calibrate light
-		gridScan(10, 10, 10);
 		
 		//manual control
 		
