@@ -4,17 +4,18 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
-import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;
 
 public class Plotbot {
 	
-	private MotorController penController = new MotorController(Motor.A);
-	private MotorController armController = new MotorController(Motor.B);
-	private MotorController wheelController = new MotorController(Motor.C);
-	private LightSensor lightSensor = new LightSensor(SensorPort.S1,false);
-	private TouchSensor touchSensor = new TouchSensor(SensorPort.S4);
+	private static MotorController penController = new MotorController(Motor.A,"pen",0);
+	private static MotorController armController = new MotorController(Motor.B, "arm",0.0166221);
+	private static MotorController wheelController = new MotorController(Motor.C, "wheel",0.0977384);
+	private static PositioningSystem GPS = new PositioningSystem();
+	private static LightSensor lightSensor = new LightSensor(SensorPort.S1,false); //flood-light off
+	private static TouchSensor touchSensor = new TouchSensor(SensorPort.S4);
+	public static Listeners listeners = new Listeners(); //global listeners
 	
 	public static void main(String[] args)
 	{
@@ -26,15 +27,20 @@ public class Plotbot {
 		//display menu to choose
 		
 		//calibration
+		//test 
+		
 		//calibrate pen motor
+		penController.calibrateZeroAndRange();
 		//calibrate arm motor
-		//calibrate wheel
+		armController.calibrateZeroAndRange();
+		//calibrate wheel (not required)
 		//calibrate light
+		gridScan(10, 10, 10);
 		
 		//manual control
 		
 		//plotting task
-		
 	}
-
+	
+	
 }
