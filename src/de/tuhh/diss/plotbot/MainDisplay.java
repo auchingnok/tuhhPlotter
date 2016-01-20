@@ -85,5 +85,8 @@ public class MainDisplay { //size 0..15, 0..7
 		enableLeftRightScroll();
 	}
 	
+	public void showSetupMotor(String part, int step) {
+		
+	}
 	
 }

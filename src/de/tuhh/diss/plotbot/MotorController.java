@@ -2,6 +2,7 @@ package de.tuhh.diss.plotbot;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
+import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
@@ -12,28 +13,28 @@ public class MotorController {
 		//make sure the movement is within range
 		//enable 3 speed level in manual drive mode
 		
+	private String name = "";
 	private NXTRegulatedMotor motor; //motor being controlled
 	private double jacobian =0; //ratio of linear displacement to angular displacement
 	private int maxTacho=0; //limit value 1
 	private int minTacho=0; //limit value 2
 	
-	private int manualStep = 10;
+	private int manualStep = 10; //step deg for manual drive mode
 	private int[] manualSpeedLevel = {30,80};
 	
 	private boolean reverse = false;
 	private boolean lockMode = false; //for calibration use
 	private boolean active = true; //become false if touch sensor pressed
 	
-	public MotorController(NXTRegulatedMotor refMotor, double refJacobian, boolean refReverse) {
+	public MotorController(String refName,NXTRegulatedMotor refMotor, double refJacobian, boolean refReverse) {
+		name = refName;
 		motor = refMotor; 
 		jacobian = refJacobian;
 		reverse = refReverse;
 		motor.stop();
 		motor.resetTachoCount();
 	}
-	
-	public void calibrateZeroAndRange() {
-		//to calibrate the zero and range of motor
+	//to calibrate the zero and range of motor
 		//the motor will first move to original zero position, in lock mode
 		
 		//press escape to toggle the motor float mode
@@ -43,17 +44,20 @@ public class MotorController {
 		
 		//same procedure for choosing the min and max value
 		//if zero is not between min and max, all values are set to zero
+	public void calibrateZeroAndRange() {
 		
 		motor.rotateTo(0);
 		motor.stop();
+		Listeners.resetButtons();)
 		
+		Plotbot.display.showSetupMotor(name,1); //display name of part and indicate step one
 		tunePosition(); //set zero
+		Plotbot.display.showSetupMotor(name,2); //display name of part and indicate step one
 		int minAngle = tunePosition();
+		Plotbot.display.showSetupMotor(name,3); //display name of part and indicate step one
 		int maxAngle = tunePosition();
 		
-		Listeners.left.reset();
-		Listeners.right.reset();
-		Listeners.escape.reset();
+		Listeners.resetButtons();
 		
 		if (minAngle*maxAngle > 0) { 
 			minTacho = 0;
@@ -140,6 +144,10 @@ public class MotorController {
 	
 	public void activate() {
 		active = true;
+	}
+	
+	public NXTRegulatedMotor getMotor() {
+		return motor;
 	}
 }
 	
