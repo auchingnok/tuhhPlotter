@@ -11,9 +11,9 @@ public class Listeners {
 	public static SensorResponse penTouch= new SensorResponse();
 	public static SensorResponse armTouch = new SensorResponse();
 	public static SensorResponse penLight = new SensorResponse();
-	public static RegulatedMotorListener penEncoder = new EncoderResponse();
-	public static RegulatedMotorListener armEncoder = new EncoderResponse();
-	public static RegulatedMotorListener wheelEncoder = new EncoderResponse();
+	public static EncoderResponse penEncoder = new EncoderResponse();
+	public static EncoderResponse armEncoder = new EncoderResponse();
+	public static EncoderResponse wheelEncoder = new EncoderResponse();
 	public static void resetButtons() {
 		left.reset();
 		right.reset();

@@ -44,11 +44,21 @@ public class Plotbot {
 		Button.ENTER.waitForPressAndRelease();
 		switch (display.getChoice()) { //do something according to input
 		case 0: {
-			//dsiplay sensor output to the display
-			
+			//display sensor output to the display
+			Listeners.penEncoder.setStartResponse(new Runnable() {public void run(){
+				display.setReadings(0, "read", Listeners.penEncoder.getReading());
+			}});
+			//start calibration
 			pen.calibrateZeroAndRange();
 		}
-		case 1: {arm.calibrateZeroAndRange();}
+		case 1: {arm.calibrateZeroAndRange();
+			//display sensor output to the display
+			Listeners.penEncoder.setStartResponse(new Runnable() {public void run(){
+				display.setReadings(0, "read", Listeners.armEncoder.getReading());
+			}});
+			//start calibration
+			pen.calibrateZeroAndRange();
+		}
 		default: {}
 		}
 		//end of example

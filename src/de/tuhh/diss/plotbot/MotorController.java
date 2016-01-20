@@ -48,7 +48,7 @@ public class MotorController {
 		
 		motor.rotateTo(0);
 		motor.stop();
-		Listeners.resetButtons();)
+		Listeners.resetButtons();
 		
 		Plotbot.display.showSetupMotor(name,1); //display name of part and indicate step one
 		tunePosition(); //set zero
