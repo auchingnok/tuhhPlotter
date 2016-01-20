@@ -184,40 +184,34 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[1] = "R: Move Down";
 		userInputInfo[2] = "ENT: Accept";
 		update();
-		enableLeftRightScroll();
 	}
 	public void setupMotor3_3() {
 		resetProperties();
-		header = new String[1];
-		options = new String[4];
+		header = new String[3];
 		userInputInfo = new String[3];
-		currentOptionId = 0;
+		varNames = new String[1];
+		varReadings = new String[1];
 		header[0] = "Setup Pen";
-		options[0] = "Step 3/3";
-		options[1] = "Set Free pos";
-		String read=varNames.toString();
-		options[2] = read;
-		String xxx=varReadings.toString();
-		options[3] = xxx;
+		header[1] = "Step 3/3";
+		header[2] = "Set Free pos";
+		varNames[0] = "";
+		varReadings[0] = "";
 		userInputInfo[0] = "L: Move Up";
 		userInputInfo[1] = "R: Move Down";
 		userInputInfo[2] = "ENT: Accept";
 		update();
-		enableLeftRightScroll();
 	}
 	public void setupLight1_2() {
 		resetProperties();
-		header = new String[1];
-		options = new String[4];
+		header = new String[3];
 		userInputInfo = new String[4];
-		currentOptionId = 0;
+		varNames = new String[1];
+		varReadings = new String[1];
 		header[0] = "Setup Light";
-		options[0] = "Step 1/2";
-		options[1] = "Set Limit 1";
-		String read=varNames.toString();
-		options[2] = read;
-		String xxx=varReadings.toString();
-		options[3] = xxx;
+		header[1] = "Step 1/2";
+		header[2] = "Set Limit 1";
+		varNames[0] = "";
+		varReadings[0] = "";
 		userInputInfo[0] = "L: Forward";
 		userInputInfo[1] = "R: Backward";
 		userInputInfo[2] = "ENT: Accept";

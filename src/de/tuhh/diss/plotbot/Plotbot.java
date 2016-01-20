@@ -40,8 +40,8 @@ public class Plotbot {
 		
 
 		//mainDisplay example
-		display.showSampleMenu();
 		Listeners.resetButtons();
+		display.showSampleMenu();
 		Button.ENTER.waitForPressAndRelease();
 		switch (display.getChoice()) { //do something according to input
 		case 0: {
