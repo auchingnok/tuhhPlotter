@@ -30,14 +30,15 @@ public class Plotbot {
 		SensorPort.S1.addSensorPortListener(Listeners.armTouch);
 		SensorPort.S3.addSensorPortListener(Listeners.penLight);
 		pen.getMotor().addListener(Listeners.penEncoder);
+		arm.getMotor().addListener(Listeners.armEncoder);
+		wheel.getMotor().addListener(Listeners.wheelEncoder);
+		//out of range monitor activates when touch 
+			//kill all the motors (restart required)
+			//output "fatal error: kill all motors"
 		
+		//end of initialization
 		
-		//calibration
-		arm.calibrateZeroAndRange(); //move to old zero, set new zero, set new limits
-		//armControler.manualControl();
-		Button.ENTER.waitForPressAndRelease();
-		
-		
+
 		//mainDisplay example
 		display.showSampleMenu();
 		Listeners.resetButtons();
