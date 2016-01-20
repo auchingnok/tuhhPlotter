@@ -22,10 +22,6 @@ public class ButtonResponse implements ButtonListener {
 	private Timer longTimer = new Timer(longHoldMs, longListener);
 	
 	public ButtonResponse() {}
-	public ButtonResponse(Runnable pressed, Runnable released) {
-		blockPressed = pressed;
-		blockReleased = released;
-	}
 	
 	public void reset() {
 		blockPressed = emptyRunnable;

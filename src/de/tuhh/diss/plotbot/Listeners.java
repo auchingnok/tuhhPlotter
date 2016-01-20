@@ -1,6 +1,5 @@
 package de.tuhh.diss.plotbot;
 
-import lejos.nxt.Button;
 //global listeners
 public class Listeners {
 	public static ButtonResponse left = new ButtonResponse();
@@ -10,4 +9,10 @@ public class Listeners {
 	public static SensorResponse pen = new SensorResponse();
 	public static SensorResponse arm = new SensorResponse();
 	public static SensorResponse light = new SensorResponse();
+	public static void resetButtons() {
+		left.reset();
+		right.reset();
+		escape.reset();
+		enter.reset();
+	}
 }

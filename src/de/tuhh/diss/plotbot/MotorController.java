@@ -134,7 +134,7 @@ public class MotorController {
 		if (isInRange(target)) {motor.rotateTo(target);};
 	}
 	
-	public void deactivate() 
+	public void deactivate() {
 		active = false;
 	}
 	

@@ -11,6 +11,7 @@ import lejos.nxt.SensorPortListener;
 import lejos.nxt.TouchSensor;
 
 public class Plotbot {
+	private static MainDisplay display = new MainDisplay();
 	private static MotorController penController = new MotorController(Motor.B,0,false);
 	private static MotorController armController = new MotorController(Motor.A,0.0166221,false);
 	private static MotorController wheelController = new MotorController(Motor.C,0.0977384,false);
@@ -30,12 +31,24 @@ public class Plotbot {
 		SensorPort.S1.addSensorPortListener(Listeners.arm);
 		SensorPort.S3.addSensorPortListener(Listeners.light);
 		//calibration
-		
-		
+		armController.calibrateZeroAndRange(); //move to old zero, set new zero, set new limits
+		//armControler.manualControl();
 		Button.ENTER.waitForPressAndRelease();
 		
-		// Some example code to check if the build process works
-		LCD.drawString("Hello", 0, 0);
+		
+		//mainDisplay example
+		display.showSampleMenu();
+		Listeners.resetButtons();
+		Button.ENTER.waitForPressAndRelease();
+		switch (display.getChoice()) {
+		case 0: {armController.calibrateZeroAndRange();}
+		case 1: {penController.calibrateZeroAndRange();}
+		default: {}
+		}
+		//end of example
+		
+		
+		/*LCD.drawString("Hello", 0, 0);
 		LCD.drawString("I am Plotterbot", 0, 1);
 		LCD.drawString("Press Enter: ",0,2);
 		Button.ENTER.waitForPressAndRelease();
@@ -44,7 +57,7 @@ public class Plotbot {
 		LCD.drawString(" -Select a Menu-", 0, 0);
 		LCD.drawString("Calibrtion Menu", 0, 3);
 		LCD.drawString("Select: Enter",0,6);
-		LCD.drawString("Next menu: Left",0,7);
+		LCD.drawString("Next menu: Left",0,7);*/
 		
 		LCD.clear();
 	}
