@@ -92,13 +92,6 @@ public class MainDisplay { //size 0..15, 0..7
 		}});
 	}
 
-	private void enableEnterScroll() { //enable scrolling the list by pressing enter only
-
-		Listeners.enter.setPressedResponse(new Runnable() {public void run() {
-			selectNextOption();
-		}});
-	}
-
 	public void setReadings(int index, int val) {
 		//set the corresponding values and names
 		//update screen
@@ -143,14 +136,13 @@ public class MainDisplay { //size 0..15, 0..7
 	public void setupMenu() {
 		reset();
 		header = new String[1];
-		options = new String[4];
+		options = new String[3];
 		userInputInfo = new String[3];
 		currentOptionId = 0;
 		header[0] = "Setup Menu";
 		options[0] ="Pen";
 		options[1] = "Arm";
-		options[2] = "Wheel";
-		options[3] = "Light Sensor";
+		options[2] = "Light Sensor";
 		userInputInfo[0] = ""; //blank row example
 		userInputInfo[1] = "L,R: Scroll";
 		userInputInfo[2] = "ENT: Continue";
@@ -177,35 +169,13 @@ public class MainDisplay { //size 0..15, 0..7
 		update();
 	}
 	public void setupPen2_3() {
-		reset();
-		header = new String[3];
-		varNames = new String[1];
-		varReadings = new String[1];
-		userInputInfo = new String[4];
-		header[0] = "Setup Pen";
 		header[1] = "Step 2/3";
 		header[2] = "Set Touch pos";
-		varNames[0] = "tacho";
-		userInputInfo[0] = "";
-		userInputInfo[1] = "L: Move Up";
-		userInputInfo[2] = "R: Move Down";
-		userInputInfo[3] = "ENT: Accept";
 		update();
 	}
 	public void setupPen3_3() {
-		reset();
-		header = new String[3];
-		varNames = new String[1];
-		varReadings = new String[1];
-		userInputInfo = new String[4];
-		header[0] = "Setup Pen";
 		header[1] = "Step 3/3";
 		header[2] = "Set Free pos";
-		varNames[0] = "tacho";
-		userInputInfo[0] = "";
-		userInputInfo[1] = "L: Move Up";
-		userInputInfo[2] = "R: Move Down";
-		userInputInfo[3] = "ENT: Accept";
 		update();
 	}
 	
@@ -228,35 +198,13 @@ public class MainDisplay { //size 0..15, 0..7
 		update();
 	}
 	public void setupArm2_3() {
-		reset();
-		header = new String[3];
-		varNames = new String[1];
-		varReadings = new String[1];
-		userInputInfo = new String[4];
-		header[0] = "Setup Arm";
 		header[1] = "Step 2/3";
 		header[2] = "Set Limit 1";
-		varNames[0] = "tacho";
-		userInputInfo[0] = "";
-		userInputInfo[1] = "L: Move Left";
-		userInputInfo[2] = "R: Move Right";
-		userInputInfo[3] = "ENT: Accept";
 		update();
 	}
 	public void setupArm3_3() {
-		reset();
-		header = new String[3];
-		varNames = new String[1];
-		varReadings = new String[1];
-		userInputInfo = new String[4];
-		header[0] = "Setup Arm";
 		header[1] = "Step 3/3";
 		header[2] = "Set Limit 2";
-		varNames[0] = "tacho";
-		userInputInfo[0] = "";
-		userInputInfo[1] = "L: Move Left";
-		userInputInfo[2] = "R: Move Right";
-		userInputInfo[3] = "ENT: Accept";
 		update();
 	}
 	
@@ -280,21 +228,9 @@ public class MainDisplay { //size 0..15, 0..7
 		enableLeftRightScroll();
 	}
 	public void setupLight2_2() {
-		reset();
-		header = new String[3];
-		varNames = new String[1];
-		varReadings = new String[1];
-		userInputInfo = new String[4];
-		header[0] = "Setup Light";
 		header[1] = "Step 2/2";
 		header[2] = "Set Limit 2";
-		varNames[0] = "read";
-		userInputInfo[0] = "ESC: ToggleLight";
-		userInputInfo[1] = "L: Forward";
-		userInputInfo[2] = "R: Backward";
-		userInputInfo[3] = "ENT: Accept";
 		update();
-		enableLeftRightScroll();
 	}
 	public void manualControl() {
 		reset();
@@ -310,7 +246,14 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[2] = "ENT: Scroll";
 		userInputInfo[3] = "ESC: Finish";
 		update();
-		enableEnterScroll();
+		Listeners.enter.setPressedResponse(new Runnable() {public void run() {
+			selectNextOption();
+			switch (currentOptionId) {
+			case 0: Plotbot.pen.enableManualMode();
+			case 1: Plotbot.arm.enableManualMode();
+			case 2: Plotbot.wheel.enableManualMode();
+			}
+		}});
 	}
 	public void plotMenu() {
 		reset();

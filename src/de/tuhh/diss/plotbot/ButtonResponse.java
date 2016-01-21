@@ -1,7 +1,6 @@
 package de.tuhh.diss.plotbot;
 import lejos.nxt.Button;
 import lejos.nxt.ButtonListener;
-import lejos.nxt.LCD;
 import lejos.util.Timer;
 
 //set response when pressing a button

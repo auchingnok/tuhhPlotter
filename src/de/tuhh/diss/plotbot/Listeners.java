@@ -1,7 +1,5 @@
 package de.tuhh.diss.plotbot;
 
-import lejos.robotics.RegulatedMotorListener;
-
 //global listeners
 public class Listeners {
 	public static ButtonResponse left = new ButtonResponse();
