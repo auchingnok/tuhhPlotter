@@ -149,6 +149,7 @@ public class Plotbot {
 	}
 	
 	static void resetRobot() {
-		
+		driver.goToXYZ(0, 0, 0);
+		mainMenu();
 	}
 }
