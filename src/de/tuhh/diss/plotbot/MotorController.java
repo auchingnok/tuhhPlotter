@@ -11,22 +11,33 @@ public class MotorController {
 		//enable 3 speed level in manual drive mode
 		
 	private NXTRegulatedMotor motor; //motor being controlled
-	private double jacobian =0; //ratio of linear displacement to angular displacement
+	private double reduction =0; //gear reduction ratio
 	private int maxTacho=0; //limit value 1
 	private int minTacho=0; //limit value 2
 	
+	private int speedFactor = 1;
 	private int manualStep = 10; //step deg for manual drive mode
 	private int[] manualSpeedLevel = {30,120};
 	
 	private boolean reverse = false;
 	
-	public MotorController(NXTRegulatedMotor refMotor, double refJacobian, boolean refReverse) {
+	public MotorController(NXTRegulatedMotor refMotor, int refSpeedFactor, double refReduction, boolean refReverse) {
 		motor = refMotor; 
-		jacobian = refJacobian;
+		speedFactor = refSpeedFactor;
+		manualStep = manualStep * speedFactor;
+		manualSpeedLevel[0] = manualSpeedLevel[0] * speedFactor;
+		manualSpeedLevel[1] = manualSpeedLevel[1] * speedFactor;
+		reduction = refReduction;
 		reverse = refReverse;
 		motor.stop();
 		motor.resetTachoCount();
 	}
+	
+	public double getTotalAngle() {
+		return motor.getTachoCount()/reduction;
+	}
+	
+	
 	
 	public void calibrateZero() {
 		Button.ENTER.waitForPressAndRelease();
@@ -86,10 +97,6 @@ public class MotorController {
 		Listeners.left.setAllResponse(leftDown,leftShort,leftLong,leftUp);
 		Listeners.right.setAllResponse(rightDown,rightShort,rightLong,rightUp);
 	}
-	
-	public double getJacob() {
-		return jacobian;
-	}
 
 	public boolean isInRange(int target) {
 		if (target < minTacho) {
@@ -101,8 +108,14 @@ public class MotorController {
 		}
 	}
 	
+	public void setSpeed(int r) {
+		motor.setSpeed(r);
+	}
+	
 	public void rotateTo(int target) {
-		if (isInRange(target)) {motor.rotateTo(target);};
+		//calculate actual rotation needed
+		int actualTarget = (int) (target * reduction);
+		if (isInRange(actualTarget)) {motor.rotateTo(actualTarget);};
 	}
 	
 	public NXTRegulatedMotor getMotor() {

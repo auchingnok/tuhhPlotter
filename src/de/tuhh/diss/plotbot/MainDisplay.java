@@ -261,10 +261,10 @@ public class MainDisplay { //size 0..15, 0..7
 		options = new String[4];
 		userInputInfo = new String[3];
 		header[0] = "Plot Menu";
-		options[0] = "Dot";
-		options[1] = "Line";
-		options[2] = "Rectangle";
-		options[3] = "TUHH";
+		options[0] = "goto Pos1";
+		options[1] = "goto Pos2";
+		options[2] = "goto Pos3";
+		options[3] = "goto Pos4";
 		userInputInfo[0] = "L,R: Scroll";
 		userInputInfo[1] = "ENT: Plot";
 		userInputInfo[2] = "ECS: Cancel";

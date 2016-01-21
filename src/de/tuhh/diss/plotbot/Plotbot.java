@@ -8,9 +8,10 @@ import lejos.nxt.SensorPort;
 
 public class Plotbot {
 	public static MainDisplay display = new MainDisplay();
-	public static MotorController pen = new MotorController(Motor.B,0,false);
-	public static MotorController arm= new MotorController(Motor.A,0.0166221,false);
-	public static MotorController wheel= new MotorController(Motor.C,0.0977384,false);
+	public static MotorController pen = new MotorController	(Motor.B, 2, 1,false);
+	public static MotorController arm= new MotorController	(Motor.A, 5, 84,false);
+	public static MotorController wheel= new MotorController(Motor.C, 1, 5,false);
+	public static PlotbotDriver driver = new PlotbotDriver(pen,arm,wheel);
 	//private static TouchSensor penSensor = new TouchSensor(SensorPort.S2);
 	//private static TouchSensor armSensor = new TouchSensor(SensorPort.S1);
 	private static LightSensor lightSensor = new LightSensor(SensorPort.S3,false); //flood-light off
@@ -117,7 +118,17 @@ public class Plotbot {
 	}
 	
 	static void plotMenu() {
+		display.plotMenu();
+		Listeners.escape.setPressedResponse(new Runnable(){public void run() {mainMenu();}});
 		
+		Button.ENTER.waitForPressAndRelease();
+		switch (display.getChoice()) {
+		case 0: driver.goToXYZ(0, 230, 0);
+		case 1: driver.goToXYZ(5, 110, -20);
+		case 2: driver.goToXYZ(10, 110, 20);
+		case 3: driver.goToXYZ(-5, -50, 50);
+		}
+		plot();
 	}
 	
 	static void plot() {
@@ -132,6 +143,9 @@ public class Plotbot {
 			display.setReadings(2, Listeners.wheelEncoder.getReading());
 		}});
 		Listeners.escape.setPressedResponse(new Runnable(){public void run() {mainMenu();}});
+		
+		Button.ESCAPE.waitForPressAndRelease();
+		plotMenu();
 	}
 	
 	static void resetRobot() {
