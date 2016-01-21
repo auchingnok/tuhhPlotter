@@ -35,7 +35,6 @@ public class Plotbot {
 		//out of range monitor activates when touch 
 			//kill all the motors (restart required)
 			//output "fatal error: kill all motors"
-		
 		//end of initialization
 		
 
@@ -47,15 +46,16 @@ public class Plotbot {
 		case 0: {
 			//display sensor output to the display
 			Listeners.penEncoder.setStartResponse(new Runnable() {public void run(){
-				display.setReadings(0, "read", Listeners.penEncoder.getReading());
+				display.setReadings(0, Listeners.penEncoder.getReading());
 			}});
 			//start calibration
 			pen.calibrateZeroAndRange();
 		}
-		case 1: {arm.calibrateZeroAndRange();
+		case 1: {
+			arm.calibrateZeroAndRange();
 			//display sensor output to the display
-			Listeners.penEncoder.setStartResponse(new Runnable() {public void run(){
-				display.setReadings(0, "read", Listeners.armEncoder.getReading());
+			Listeners.armEncoder.setStartResponse(new Runnable() {public void run(){
+				display.setReadings(0, Listeners.armEncoder.getReading());
 			}});
 			//start calibration
 			pen.calibrateZeroAndRange();

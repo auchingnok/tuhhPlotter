@@ -49,15 +49,16 @@ public class MainDisplay { //size 0..15, 0..7
 
 	}
 
-	private void resetProperties() {
+	private void reset() {
+		//remove all buttons listeners
 		//set all properties to a zero length array;
+		Listeners.resetButtons();
 		currentOptionId = 0;
 		header = new String[0];
 		options = new String[0];
-		userInputInfo = new String[0];
 		varNames = new String[0];
 		varReadings = new String[0];
-
+		userInputInfo = new String[0];
 	}
 
 	private void selectPreviousOption() {
@@ -82,17 +83,17 @@ public class MainDisplay { //size 0..15, 0..7
 	}
 
 	private void enableLeftRightScroll() { 
-		Listeners.resetButtons();
+
 		Listeners.left.setPressedResponse(new Runnable() {public void run() {
 			selectPreviousOption();
 		}});
-		Listeners.left.setPressedResponse(new Runnable() {public void run() {
+		Listeners.right.setPressedResponse(new Runnable() {public void run() {
 			selectNextOption();
 		}});
 	}
 
 	private void enableEnterScroll() { //enable scrolling the list by pressing enter only
-		Listeners.resetButtons();
+
 		Listeners.enter.setPressedResponse(new Runnable() {public void run() {
 			selectNextOption();
 		}});
@@ -103,25 +104,28 @@ public class MainDisplay { //size 0..15, 0..7
 		//update screen
 		String valst=Integer.toString(val);
 		varReadings[index] = valst;
-		
+		update();
 	}
 
-
 	//below are methods to display each menus
-	//an example of showing a menu
+
 	public void welcomeScreen() {
-		resetProperties();
-		header = new String[2];
+		reset();
+		header = new String[6];
 		userInputInfo = new String[1];
 		currentOptionId = 0;
 		header[0] = "Hello";
 		header[1] = "I am Plotbot.";
+		header[2] = "";
+		header[3] = "";
+		header[4] = "";
+		header[5] = "";
 		userInputInfo[0] = "ENT: Continue";
 		update();		
 	}
 
 	public void mainMenu() {
-		resetProperties();
+		reset();
 		header = new String[1];
 		options = new String[4];
 		userInputInfo = new String[3];
@@ -137,7 +141,7 @@ public class MainDisplay { //size 0..15, 0..7
 		enableLeftRightScroll();
 	}
 	public void setupMenu() {
-		resetProperties();
+		reset();
 		header = new String[1];
 		options = new String[4];
 		userInputInfo = new String[3];
@@ -153,98 +157,150 @@ public class MainDisplay { //size 0..15, 0..7
 		update();
 		enableLeftRightScroll();
 	}
-	public void setupMotor1_3() {
-		resetProperties();
-		header = new String[4];
-		userInputInfo = new String[3];
+	
+	//setup pen 
+	
+	public void setupPen1_3() {
+		reset();
+		header = new String[3];
 		varNames = new String[1];
 		varReadings = new String[1];
+		userInputInfo = new String[4];
 		header[0] = "Setup Pen";
 		header[1] = "Step 1/3";
 		header[2] = "Set zero pos";
-		varNames[0] = "";
-		varReadings[0] = "";
-		userInputInfo[0] = "L: Move Up";
-		userInputInfo[1] = "R: Move Down";
-		userInputInfo[2] = "ENT: Accept";
+		varNames[0] = "tacho";
+		userInputInfo[0] = "";
+		userInputInfo[1] = "L: Move Up";
+		userInputInfo[2] = "R: Move Down";
+		userInputInfo[3] = "ENT: Accept";
 		update();
 	}
-	public void setupMotor2_3() {
-		resetProperties();
-		header = new String[4];
-		userInputInfo = new String[3];
+	public void setupPen2_3() {
+		reset();
+		header = new String[3];
 		varNames = new String[1];
 		varReadings = new String[1];
+		userInputInfo = new String[4];
 		header[0] = "Setup Pen";
 		header[1] = "Step 2/3";
 		header[2] = "Set Touch pos";
-		varNames[0] = "";
-		varReadings[0] = "";
-		userInputInfo[0] = "L: Move Up";
-		userInputInfo[1] = "R: Move Down";
-		userInputInfo[2] = "ENT: Accept";
+		varNames[0] = "tacho";
+		userInputInfo[0] = "";
+		userInputInfo[1] = "L: Move Up";
+		userInputInfo[2] = "R: Move Down";
+		userInputInfo[3] = "ENT: Accept";
 		update();
 	}
-	public void setupMotor3_3() {
-		resetProperties();
+	public void setupPen3_3() {
+		reset();
 		header = new String[3];
-		userInputInfo = new String[3];
 		varNames = new String[1];
 		varReadings = new String[1];
+		userInputInfo = new String[4];
 		header[0] = "Setup Pen";
 		header[1] = "Step 3/3";
 		header[2] = "Set Free pos";
-		varNames[0] = "";
-		varReadings[0] = "";
-		userInputInfo[0] = "L: Move Up";
-		userInputInfo[1] = "R: Move Down";
-		userInputInfo[2] = "ENT: Accept";
+		varNames[0] = "tacho";
+		userInputInfo[0] = "";
+		userInputInfo[1] = "L: Move Up";
+		userInputInfo[2] = "R: Move Down";
+		userInputInfo[3] = "ENT: Accept";
 		update();
 	}
-	public void setupLight1_2() {
-		resetProperties();
+	
+	//setup arm
+	
+	public void setupArm1_3() {
+		reset();
 		header = new String[3];
-		userInputInfo = new String[4];
 		varNames = new String[1];
 		varReadings = new String[1];
+		userInputInfo = new String[4];
+		header[0] = "Setup Arm";
+		header[1] = "Step 1/3";
+		header[2] = "Set zero pos";
+		varNames[0] = "tacho";
+		userInputInfo[0] = "";
+		userInputInfo[1] = "L: Move Left";
+		userInputInfo[2] = "R: Move Right";
+		userInputInfo[3] = "ENT: Accept";
+		update();
+	}
+	public void setupArm2_3() {
+		reset();
+		header = new String[3];
+		varNames = new String[1];
+		varReadings = new String[1];
+		userInputInfo = new String[4];
+		header[0] = "Setup Arm";
+		header[1] = "Step 2/3";
+		header[2] = "Set Limit 1";
+		varNames[0] = "tacho";
+		userInputInfo[0] = "";
+		userInputInfo[1] = "L: Move Left";
+		userInputInfo[2] = "R: Move Right";
+		userInputInfo[3] = "ENT: Accept";
+		update();
+	}
+	public void setupArm3_3() {
+		reset();
+		header = new String[3];
+		varNames = new String[1];
+		varReadings = new String[1];
+		userInputInfo = new String[4];
+		header[0] = "Setup Arm";
+		header[1] = "Step 3/3";
+		header[2] = "Set Limit 2";
+		varNames[0] = "tacho";
+		userInputInfo[0] = "";
+		userInputInfo[1] = "L: Move Left";
+		userInputInfo[2] = "R: Move Right";
+		userInputInfo[3] = "ENT: Accept";
+		update();
+	}
+	
+	//setup light
+	
+	public void setupLight1_2() {
+		reset();
+		header = new String[3];
+		varNames = new String[1];
+		varReadings = new String[1];
+		userInputInfo = new String[4];
 		header[0] = "Setup Light";
 		header[1] = "Step 1/2";
 		header[2] = "Set Limit 1";
-		varNames[0] = "";
-		varReadings[0] = "";
-		userInputInfo[0] = "L: Forward";
-		userInputInfo[1] = "R: Backward";
-		userInputInfo[2] = "ENT: Accept";
-		userInputInfo[3] = "ESC: ToggleLight";
+		varNames[0] = "read";
+		userInputInfo[0] = "ESC: ToggleLight";
+		userInputInfo[1] = "L: Forward";
+		userInputInfo[2] = "R: Backward";
+		userInputInfo[3] = "ENT: Accept";
 		update();
 		enableLeftRightScroll();
 	}
 	public void setupLight2_2() {
-		resetProperties();
-		header = new String[1];
-		options = new String[4];
+		reset();
+		header = new String[3];
+		varNames = new String[1];
+		varReadings = new String[1];
 		userInputInfo = new String[4];
-		currentOptionId = 0;
 		header[0] = "Setup Light";
-		options[0] = "Step 2/2";
-		options[1] = "Set Limit 2";
-		String read=varNames.toString();
-		options[2] = read;
-		String xxx=varReadings.toString();
-		options[3] = xxx;
-		userInputInfo[0] = "L: Forward";
-		userInputInfo[1] = "R: Backward";
-		userInputInfo[2] = "ENT: Accept";
-		userInputInfo[3] = "ESC: ToggleLight";
+		header[1] = "Step 2/2";
+		header[2] = "Set Limit 2";
+		varNames[0] = "read";
+		userInputInfo[0] = "ESC: ToggleLight";
+		userInputInfo[1] = "L: Forward";
+		userInputInfo[2] = "R: Backward";
+		userInputInfo[3] = "ENT: Accept";
 		update();
 		enableLeftRightScroll();
 	}
 	public void manualControl() {
-		resetProperties();
+		reset();
 		header = new String[1];
 		options = new String[3];
 		userInputInfo = new String[4];
-		currentOptionId = 0;
 		header[0] = "Manual Control";
 		options[0] = "Move X";
 		options[1] = "Move Y";
@@ -254,14 +310,13 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[2] = "ENT: Scroll";
 		userInputInfo[3] = "ESC: Finish";
 		update();
-		enableLeftRightScroll();
+		enableEnterScroll();
 	}
 	public void plotMenu() {
-		resetProperties();
+		reset();
 		header = new String[1];
 		options = new String[4];
 		userInputInfo = new String[3];
-		currentOptionId = 0;
 		header[0] = "Plot Menu";
 		options[0] = "Dot";
 		options[1] = "Line";
@@ -274,21 +329,21 @@ public class MainDisplay { //size 0..15, 0..7
 		enableLeftRightScroll();
 	}
 	public void plot() {
-		resetProperties();
+		reset();
 		header = new String[1];
-		options = new String[3];
+		varNames = new String[3];
+		varReadings = new String[3];
 		userInputInfo = new String[4];
 		currentOptionId = 0;
 		header[0] = "Plotting Line";
-		options[0] = "X=";
-		options[1] = "Move Y";
-		options[2] = "Move Z";
-		userInputInfo[0] = "L: -";
-		userInputInfo[1] = "R: +";
-		userInputInfo[2] = "ENT: Scroll";
-		userInputInfo[3] = "ESC: Finish";
+		varNames[0] = "X";
+		varNames[1] = "Y";
+		varNames[2] = "Z";
+		userInputInfo[0] = "L: Step Back";
+		userInputInfo[1] = "R: Step Forth";
+		userInputInfo[2] = "ENT:Pause";
+		userInputInfo[3] = "ESC: Abort";
 		update();
-		enableLeftRightScroll();
 	}
 
 
