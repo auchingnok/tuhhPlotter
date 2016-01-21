@@ -32,8 +32,8 @@ public class ButtonResponse implements ButtonListener {
 		blockLong = longH;
 	}
 	
-	public void setPressedResponse(Runnable pressed) {blockPressed = pressed;}
-	public void setReleasedResponse(Runnable released) {blockReleased = released;}
+	public void setPressedResponse(Runnable pressed) {reset();blockPressed = pressed;}
+	public void setReleasedResponse(Runnable released) {reset();blockReleased = released;}
 	public void setShortHoldResponse(Runnable shortH) {
 		blockShort = shortH;
 		Listeners.shortListener.setResponse(blockShort);

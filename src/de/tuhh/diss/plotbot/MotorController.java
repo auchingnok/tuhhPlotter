@@ -40,12 +40,10 @@ public class MotorController {
 	
 	
 	public void calibrateZero() {
-		Button.ENTER.waitForPressAndRelease();
 		motor.resetTachoCount();
 	}
 	
 	public void calibrateMin() {
-		Button.ENTER.waitForPressAndRelease();
 		minTacho = motor.getTachoCount();
 		rotateTo(0);
 	}

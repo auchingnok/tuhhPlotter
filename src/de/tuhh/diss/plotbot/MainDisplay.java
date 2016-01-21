@@ -3,8 +3,6 @@ package de.tuhh.diss.plotbot;
 import lejos.nxt.LCD;
 
 public class MainDisplay { //size 0..15, 0..7
-	//main display
-
 	//the properties below are in array form; each element occupies one row
 	private String[] header = {}; //elements that are stationary
 	private String[] options = {}; //items that are selected
@@ -13,9 +11,7 @@ public class MainDisplay { //size 0..15, 0..7
 	private String[] varReadings = {}; //real time value of variable. 3 digits
 	private String[] userInputInfo = {}; //tell user what to do
 
-	public MainDisplay() {
-		LCD.clear();
-	}
+	public MainDisplay() {}
 
 	public int getChoice() { //return selected option to outside
 		return currentOptionId;
@@ -46,13 +42,11 @@ public class MainDisplay { //size 0..15, 0..7
 			LCD.drawString(userInputInfo[i], 0, y);
 			y++;
 		}
-
 	}
 
 	private void reset() {
 		//remove all buttons listeners
 		//set all properties to a zero length array;
-		Listeners.resetButtons();
 		currentOptionId = 0;
 		header = new String[0];
 		options = new String[0];
@@ -61,7 +55,7 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo = new String[0];
 	}
 
-	private void selectPreviousOption() {
+	public void selectPreviousOption() {
 		//select previous option, update option variable
 		//if no previous option, select the last option
 		//update the screen
@@ -71,7 +65,7 @@ public class MainDisplay { //size 0..15, 0..7
 		update();
 	}
 
-	private void selectNextOption() {
+	public void selectNextOption() {
 		//select next option, update option variable
 		//if no next option, select the first option
 		//update the screen
@@ -80,16 +74,6 @@ public class MainDisplay { //size 0..15, 0..7
 			currentOptionId=0;
 		update();
 					
-	}
-
-	private void enableLeftRightScroll() { 
-
-		Listeners.left.setPressedResponse(new Runnable() {public void run() {
-			selectPreviousOption();
-		}});
-		Listeners.right.setPressedResponse(new Runnable() {public void run() {
-			selectNextOption();
-		}});
 	}
 
 	public void setReadings(int index, int val) {
@@ -131,7 +115,6 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[1] = "L,R: Scroll";
 		userInputInfo[2] = "ENT: Continue";
 		update();
-		enableLeftRightScroll();
 	}
 	public void setupMenu() {
 		reset();
@@ -147,7 +130,6 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[1] = "L,R: Scroll";
 		userInputInfo[2] = "ENT: Continue";
 		update();
-		enableLeftRightScroll();
 	}
 	
 	//setup pen 
@@ -225,7 +207,6 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[2] = "R: Backward";
 		userInputInfo[3] = "ENT: Accept";
 		update();
-		enableLeftRightScroll();
 	}
 	public void setupLight2_2() {
 		header[1] = "Step 2/2";
@@ -269,7 +250,6 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[1] = "ENT: Plot";
 		userInputInfo[2] = "ECS: Cancel";
 		update();
-		enableLeftRightScroll();
 	}
 	public void plot() {
 		reset();
@@ -288,7 +268,13 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[3] = "ESC: Abort";
 		update();
 	}
-
+	
+	public void resetting() {
+		reset();
+		header = new String[1];
+		header[0] = "Resetting...";
+		update();
+	}
 
 
 }
