@@ -5,6 +5,7 @@ import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 //import lejos.nxt.TouchSensor;
+import lejos.util.Timer;
 
 public class Plotbot {
 	public static MainDisplay display = new MainDisplay();
@@ -19,9 +20,10 @@ public class Plotbot {
 	public static void main(String[] args)
 	{
 		initialization();
+		Listeners.enter.setPressedResponse(new Runnable(){public void run() {mainMenu();}});
 		display.welcomeScreen();
 		Button.ENTER.waitForPressAndRelease();
-		mainMenu();
+		display.mainMenu();
 	}
 	
 	static void initialization() {
@@ -30,6 +32,8 @@ public class Plotbot {
 		Button.RIGHT.addButtonListener(Listeners.right);
 		Button.ENTER.addButtonListener(Listeners.enter);
 		Button.ESCAPE.addButtonListener(Listeners.escape);
+		Listeners.shortTimer = new Timer(800,Listeners.shortListener);
+		Listeners.longTimer = new Timer(1600, Listeners.longListener);
 		SensorPort.S2.addSensorPortListener(Listeners.penTouch);
 		SensorPort.S1.addSensorPortListener(Listeners.armTouch);
 		SensorPort.S3.addSensorPortListener(Listeners.penLight);
@@ -44,7 +48,10 @@ public class Plotbot {
 	
 	static void mainMenu() {
 		display.mainMenu();
-		Button.ENTER.waitForPressAndRelease();
+		Listeners.enter.setPressedResponse(new Runnable(){public void run() {handleMainMenuChoice();}});
+	}
+	
+	static void handleMainMenuChoice() {
 		switch (display.getChoice()) {
 		case 0: setupMenu();
 		case 1: manualControl();
@@ -56,8 +63,10 @@ public class Plotbot {
 	static void setupMenu() {
 		display.setupMenu();
 		Listeners.escape.setPressedResponse(new Runnable(){public void run() {mainMenu();}});
-		Button.ENTER.waitForPressAndRelease();
-		//react to input
+		Listeners.enter.setPressedResponse(new Runnable(){public void run() {handleSetupMenuChoice();}});
+	}
+	
+	static void handleSetupMenuChoice() {
 		switch (display.getChoice()) {
 		case 0: setupPen();
 		case 1: setupArm();
@@ -113,14 +122,12 @@ public class Plotbot {
 	
 	static void manualControl() {
 		display.manualControl();
-		Button.ESCAPE.waitForPressAndRelease();
-		mainMenu();
+		Listeners.escape.setPressedResponse(new Runnable(){public void run() {mainMenu();}});
 	}
 	
 	static void plotMenu() {
 		display.plotMenu();
 		Listeners.escape.setPressedResponse(new Runnable(){public void run() {mainMenu();}});
-		
 		Button.ENTER.waitForPressAndRelease();
 		switch (display.getChoice()) {
 		case 0: driver.goToXYZ(0, 230, 0);
@@ -144,8 +151,7 @@ public class Plotbot {
 		}});
 		Listeners.escape.setPressedResponse(new Runnable(){public void run() {mainMenu();}});
 		
-		Button.ESCAPE.waitForPressAndRelease();
-		plotMenu();
+		Listeners.enter.setPressedResponse(new Runnable(){public void run() {plotMenu();}});
 	}
 	
 	static void resetRobot() {

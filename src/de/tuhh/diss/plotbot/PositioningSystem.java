@@ -19,7 +19,7 @@ public class PositioningSystem {
 		arm = refArm;
 		wheel = refWheel;
 	}
-	
+	/*
 	//to be optimized
 	public static Point3D getXYZ(int anglePen,int angleArm,int angleWheel) {
 		double x= - 1/arm.getJacob() * Math.sin(angleArm);
@@ -34,4 +34,5 @@ public class PositioningSystem {
 		double w= (y-1/arm.getJacob())/wheel.getJacob();
 		return new Point3D(p,a,w);
 	}
+	*/
 }

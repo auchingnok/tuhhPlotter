@@ -11,15 +11,7 @@ public class ButtonResponse implements ButtonListener {
 	private Runnable blockShort = emptyRunnable;
 	private Runnable blockLong = emptyRunnable;
 	private Runnable blockReleased = emptyRunnable;
-	
-	private int shortHoldMs = 800; //default short hold timeout
-	private int longHoldMs = 1600; //default long hold timeout
-	
-	private DelayTimerListener shortListener = new DelayTimerListener();
-	private DelayTimerListener longListener = new DelayTimerListener();
-	private Timer shortTimer = new Timer(shortHoldMs,shortListener);
-	private Timer longTimer = new Timer(longHoldMs, longListener);
-	
+
 	public ButtonResponse() {}
 	
 	public void reset() {
@@ -44,21 +36,21 @@ public class ButtonResponse implements ButtonListener {
 	public void setReleasedResponse(Runnable released) {blockReleased = released;}
 	public void setShortHoldResponse(Runnable shortH) {
 		blockShort = shortH;
-		shortListener.setResponse(blockShort);
+		Listeners.shortListener.setResponse(blockShort);
 	}
 	public void setLongHoldResponse(Runnable longH) {
 		blockLong = longH;
-		longListener.setResponse(blockLong);
+		Listeners.longListener.setResponse(blockLong);
 	}
 	
 	public void buttonPressed(Button b) {
 		blockPressed.run();
-		shortTimer.start();
-		longTimer.start();
+		Listeners.shortTimer.start();
+		//longTimer.start();
 	}
 	public void buttonReleased(Button b) {
 		blockReleased.run();
-		shortTimer.stop();
-		longTimer.stop();
+		Listeners.shortTimer.stop();
+		Listeners.longTimer.stop();
 	}
 }

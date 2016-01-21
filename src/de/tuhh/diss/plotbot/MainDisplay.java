@@ -163,8 +163,8 @@ public class MainDisplay { //size 0..15, 0..7
 		header[2] = "Set zero pos";
 		varNames[0] = "tacho";
 		userInputInfo[0] = "";
-		userInputInfo[1] = "L: Move Up";
-		userInputInfo[2] = "R: Move Down";
+		userInputInfo[1] = "L: Move Down";
+		userInputInfo[2] = "R: Move Up";
 		userInputInfo[3] = "ENT: Accept";
 		update();
 	}

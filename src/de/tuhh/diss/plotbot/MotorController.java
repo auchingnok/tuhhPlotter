@@ -17,7 +17,7 @@ public class MotorController {
 	
 	private int speedFactor = 1;
 	private int manualStep = 10; //step deg for manual drive mode
-	private int[] manualSpeedLevel = {30,120};
+	private int[] manualSpeedLevel = {60,120};
 	
 	private boolean reverse = false;
 	
@@ -47,11 +47,13 @@ public class MotorController {
 	public void calibrateMin() {
 		Button.ENTER.waitForPressAndRelease();
 		minTacho = motor.getTachoCount();
+		rotateTo(0);
 	}
 	
 	public void calibrateMax() {
 		Button.ENTER.waitForPressAndRelease();
 		maxTacho = motor.getTachoCount();
+		rotateTo(0);
 	}
 	
 	public void checkRange() { //make sure minTacho <= 0 <= maxTacho
@@ -70,6 +72,7 @@ public class MotorController {
 	public void enableManualMode() {
 		final Runnable leftDown= new Runnable() {public void run() {
 			if (reverse) {motor.rotate(-manualStep);} else {motor.rotate(manualStep);}
+			//if (reverse) {motor.backward();} else {motor.forward();}
 		}};
 		final Runnable leftShort= new Runnable() {public void run() {
 			motor.setSpeed(manualSpeedLevel[0]);
@@ -83,6 +86,7 @@ public class MotorController {
 		}};
 		final Runnable rightDown= new Runnable() {public void run() {
 			if (reverse) {motor.rotate(manualStep);} else {motor.rotate(-manualStep);}
+			//if (reverse) {motor.forward();} else {motor.backward();}
 		}};
 		final Runnable rightShort= new Runnable() {public void run() {
 			motor.setSpeed(manualSpeedLevel[0]);
