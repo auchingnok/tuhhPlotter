@@ -69,8 +69,8 @@ public class MotorController {
 	
 	public void enableManualMode() {
 		final Runnable leftDown= new Runnable() {public void run() {
-			if (reverse) {motor.rotate(-manualStep);} else {motor.rotate(manualStep);}
-			//if (reverse) {motor.backward();} else {motor.forward();}
+			//if (reverse) {motor.rotate(-manualStep);} else {motor.rotate(manualStep);}
+			if (reverse) {motor.backward();} else {motor.forward();}
 		}};
 		final Runnable leftShort= new Runnable() {public void run() {
 			motor.setSpeed(manualSpeedLevel[0]);
@@ -83,8 +83,8 @@ public class MotorController {
 			motor.stop();
 		}};
 		final Runnable rightDown= new Runnable() {public void run() {
-			if (reverse) {motor.rotate(manualStep);} else {motor.rotate(-manualStep);}
-			//if (reverse) {motor.forward();} else {motor.backward();}
+			//if (reverse) {motor.rotate(manualStep);} else {motor.rotate(-manualStep);}
+			if (reverse) {motor.forward();} else {motor.backward();}
 		}};
 		final Runnable rightShort= new Runnable() {public void run() {
 			motor.setSpeed(manualSpeedLevel[0]);

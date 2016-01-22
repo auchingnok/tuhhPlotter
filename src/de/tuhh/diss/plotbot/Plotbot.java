@@ -17,6 +17,7 @@ public class Plotbot {
 	//private static TouchSensor penSensor = new TouchSensor(SensorPort.S2);
 	//private static TouchSensor armSensor = new TouchSensor(SensorPort.S1);
 	private static LightSensor lightSensor = new LightSensor(SensorPort.S3,false); //flood-light off
+	private static int menuChoice = 0;
 	
 	static void initialization() {
 		//initialization
@@ -53,8 +54,18 @@ public class Plotbot {
 				do {
 					buttonID = Button.waitForAnyPress(); //get input
 					switch (buttonID) { //reactions
-					case Button.ID_LEFT: display.selectPreviousOption();
-					case Button.ID_RIGHT:display.selectNextOption();
+					case Button.ID_LEFT: {
+						menuChoice--;
+						if(menuChoice < 0)
+							menuChoice = 3;
+						display.selectOption(menuChoice);
+					}
+					case Button.ID_RIGHT: {
+						menuChoice++;
+						if(menuChoice > 3)
+							menuChoice = 0;
+						display.selectOption(menuChoice);
+					}
 					case Button.ID_ENTER: {
 						switch (display.getChoice()) {
 						case 0: menu = Menu.SETUP;
@@ -70,8 +81,18 @@ public class Plotbot {
 				do {
 					buttonID = Button.waitForAnyPress();
 					switch (buttonID) {
-					case Button.ID_LEFT: display.selectPreviousOption();
-					case Button.ID_RIGHT:display.selectNextOption();
+					case Button.ID_LEFT: {
+						menuChoice = menuChoice -1;
+						if(menuChoice < 0)
+							menuChoice = 2;
+						display.selectOption(menuChoice);
+					}
+					case Button.ID_RIGHT: {
+						menuChoice++;
+						if(menuChoice > 2)
+							menuChoice = 0;
+						display.selectOption(menuChoice);
+					}
 					case Button.ID_ENTER: 
 						switch (display.getChoice()) {
 						case 0: menu = Menu.SET_PEN;
@@ -142,13 +163,17 @@ public class Plotbot {
 				do {
 					buttonID = Button.waitForAnyPress();
 					switch (buttonID) {
-					case Button.ID_ENTER :
-						display.selectNextOption();
+					case Button.ID_ENTER :{
+						menuChoice++;
+						if(menuChoice > 2)
+							menuChoice = 2;
+						display.selectOption(menuChoice);
 						switch (display.getChoice()) {
 						case 0: pen.enableManualMode();
 						case 1: arm.enableManualMode();
 						case 2: wheel.enableManualMode();
 						}
+					}
 					case Button.ID_ESCAPE: menu = Menu.MAIN;
 					}
 				} while (buttonID != Button.ID_ESCAPE);
@@ -160,8 +185,18 @@ public class Plotbot {
 				do {
 					buttonID = Button.waitForAnyPress();
 					switch (buttonID) {
-					case Button.ID_LEFT: display.selectPreviousOption();
-					case Button.ID_RIGHT:display.selectNextOption();
+					case Button.ID_LEFT: {
+						menuChoice--;
+						if(menuChoice < 0)
+							menuChoice = 3;
+						display.selectOption(menuChoice);
+					}
+					case Button.ID_RIGHT: {
+						menuChoice++;
+						if(menuChoice > 3)
+							menuChoice = 0;
+						display.selectOption(menuChoice);
+					}
 					case Button.ID_ENTER : {
 						display.plot();
 						//displayTachos();

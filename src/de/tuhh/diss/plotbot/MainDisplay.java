@@ -55,23 +55,11 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo = new String[0];
 	}
 
-	public void selectPreviousOption() {
-		//select previous option, update option variable
-		//if no previous option, select the last option
-		//update the screen
-		currentOptionId--;
-		if(currentOptionId < 0)
-			currentOptionId=options.length-1;
-		update();
-	}
-
-	public void selectNextOption() {
+	public void selectOption(int selection) {
 		//select next option, update option variable
 		//if no next option, select the first option
 		//update the screen
-		currentOptionId++;
-		if(currentOptionId > options.length-1)
-			currentOptionId=0;
+		currentOptionId = selection;
 		update();
 					
 	}
@@ -228,7 +216,6 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[3] = "ESC: Finish";
 		update();
 		Listeners.enter.setPressedResponse(new Runnable() {public void run() {
-			selectNextOption();
 			switch (currentOptionId) {
 			case 0: Plotbot.pen.enableManualMode();
 			case 1: Plotbot.arm.enableManualMode();
