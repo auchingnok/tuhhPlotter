@@ -24,7 +24,10 @@ public class Path { //collection of Point3D
 			double p = point.z/Rp;
 			double a = Math.asin(point.x/La);
 			double w = point.y-La+La*Math.cos(a)/Rw;
-			pawPath[i] = new Point3D(p,a,w);
+			double pBeforeReduction = p*Kp;
+			double aBeforeReduction = a*Ka;
+			double wBeforeReduction = w*Kw;
+			pawPath[i] = new Point3D(pBeforeReduction,aBeforeReduction,wBeforeReduction);
 		}
 		return pawPath;
 	}
@@ -64,18 +67,36 @@ public class Path { //collection of Point3D
 	}
 	
 	public static Point3D penUp(Point3D oldPosition) {
-		return Point3D(oldPosition.x, oldPosition.y, penFreeTacho);
+		return new Point3D(oldPosition.x, oldPosition.y, penFreeTacho);
 	}
 	
 	public static Point3D penDown(Point3D oldPosition) {
-		return Point3D(oldPosition.x, oldPosition.y, penTouchTacho);
+		return new Point3D(oldPosition.x, oldPosition.y, penTouchTacho);
 	}
 	
-	public static Point3D[] Rect(Point3D cornerLowerLeft, int width, int height) {
-		Point3D[] cornerUpperLeft = Point3D(cornerLowerLeft.x,cornerLowerLeft.y+height,)
-		Point3D[] path = Path.straightLine(ptStart, ptEnd, spacing);
+	public static Point3D[] rect(Point3D startPoint, Point3D cornerLowerLeft, double width, double height,int spacing) {
+		Point3D cornerUpperLeft = cornerLowerLeft.translate(0, height, 0);
+		Point3D cornerUpperRight = cornerLowerLeft.translate(width, height, 0);
+		Point3D cornerLowerRight = cornerLowerLeft.translate(width, 0, 0);
 		
-		return ;
+		Point3D[] preparePath1 	= Path.straightLine(startPoint, penUp(startPoint), spacing);
+		Point3D[] preparePath2 	= Path.straightLine(penUp(startPoint), cornerLowerLeft, spacing);
+		Point3D[] leftPath 		= Path.straightLine(penDown(cornerLowerLeft), penDown(cornerUpperLeft), spacing);
+		Point3D[] upPath 		= Path.straightLine(penDown(cornerUpperLeft), penDown(cornerUpperRight), spacing);
+		Point3D[] rightPath 	= Path.straightLine(penDown(cornerUpperRight), penDown(cornerLowerRight), spacing);
+		Point3D[] lowerPath 	= Path.straightLine(penDown(cornerLowerRight), penDown(cornerLowerLeft), spacing);
+		
+		int totalSize = preparePath1.length+preparePath2.length+leftPath.length+upPath.length+rightPath.length+lowerPath.length;
+		Point3D[] totalPath = new Point3D[totalSize];
+		System.arraycopy(preparePath1, 	0, totalPath, 0, 		preparePath1.length); //source,source start,target,target start, copy length
+		System.arraycopy(preparePath2, 	0, totalPath, preparePath1.length, 		preparePath2.length);
+		System.arraycopy(leftPath, 		0, totalPath, preparePath1.length+preparePath2.length, 		leftPath.length);
+		System.arraycopy(upPath, 		0, totalPath, preparePath1.length+preparePath2.length+leftPath.length, 		upPath.length);
+		System.arraycopy(rightPath, 	0, totalPath, preparePath1.length+preparePath2.length+leftPath.length+upPath.length, 		rightPath.length);
+		System.arraycopy(lowerPath, 	0, totalPath, preparePath1.length+preparePath2.length+leftPath.length+upPath.length+rightPath.length, 		lowerPath.length);
+		
+		return totalPath;
 	}
+
 
 }
