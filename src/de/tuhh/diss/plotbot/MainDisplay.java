@@ -60,7 +60,9 @@ public class MainDisplay { //size 0..15, 0..7
 		//if no next option, select the first option
 		//update the screen
 		currentOptionId = selection;
+		
 		update();
+		LCD.drawString(Integer.toString(currentOptionId) , 0, 5);
 					
 	}
 
@@ -215,13 +217,6 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[2] = "ENT: Scroll";
 		userInputInfo[3] = "ESC: Finish";
 		update();
-		Listeners.enter.setPressedResponse(new Runnable() {public void run() {
-			switch (currentOptionId) {
-			case 0: Plotbot.pen.enableManualMode();
-			case 1: Plotbot.arm.enableManualMode();
-			case 2: Plotbot.wheel.enableManualMode();
-			}
-		}});
 	}
 	public void plotMenu() {
 		reset();

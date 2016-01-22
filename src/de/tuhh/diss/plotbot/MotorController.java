@@ -5,28 +5,21 @@ import lejos.nxt.NXTRegulatedMotor;
 
 public class MotorController {
 	//motor controller have the following functions:
-		//define forward direction
-		//store max, min and zero position
-		//make sure the movement is within range
-		//enable 3 speed level in manual drive mode
-		
-	private NXTRegulatedMotor motor; //motor being controlled
+	public NXTRegulatedMotor motor; //motor being controlled
 	private int reduction =0; //gear reduction ratio
 	private int maxTacho=0; //limit value 1
 	private int minTacho=0; //limit value 2
 	
-	private int speedFactor = 1;
-	private int manualStep = 10; //step deg for manual drive mode
-	private int[] manualSpeedLevel = {60,120};
-	
+	private boolean hasRange = false;
 	private boolean reverse = false;
 	
-	public MotorController(NXTRegulatedMotor refMotor, int refSpeedFactor, int refReduction, boolean refReverse) {
+	public MotorController(
+			boolean ranged,
+			NXTRegulatedMotor refMotor,
+			int refReduction,
+			boolean refReverse) {
+		hasRange = ranged;
 		motor = refMotor; 
-		speedFactor = refSpeedFactor;
-		manualStep = manualStep * speedFactor;
-		manualSpeedLevel[0] = manualSpeedLevel[0] * speedFactor;
-		manualSpeedLevel[1] = manualSpeedLevel[1] * speedFactor;
 		reduction = refReduction;
 		reverse = refReverse;
 		motor.stop();
@@ -36,8 +29,6 @@ public class MotorController {
 	public double getTotalAngle() {
 		return motor.getTachoCount()/reduction;
 	}
-	
-	
 	
 	public void calibrateZero() {
 		motor.resetTachoCount();
@@ -67,41 +58,29 @@ public class MotorController {
 		}
 	}
 	
-	public void enableManualMode() {
+	public void enableManualMode(int speed) {
+		motor.setSpeed(speed);
 		final Runnable leftDown= new Runnable() {public void run() {
-			//if (reverse) {motor.rotate(-manualStep);} else {motor.rotate(manualStep);}
 			if (reverse) {motor.backward();} else {motor.forward();}
-		}};
-		final Runnable leftShort= new Runnable() {public void run() {
-			motor.setSpeed(manualSpeedLevel[0]);
-			if (reverse) {motor.backward();} else {motor.forward();}
-		}};
-		final Runnable leftLong= new Runnable() {public void run() {
-			motor.setSpeed(manualSpeedLevel[1]);
 		}};
 		final Runnable leftUp= new Runnable() {public void run() {
 			motor.stop();
 		}};
 		final Runnable rightDown= new Runnable() {public void run() {
-			//if (reverse) {motor.rotate(manualStep);} else {motor.rotate(-manualStep);}
 			if (reverse) {motor.forward();} else {motor.backward();}
-		}};
-		final Runnable rightShort= new Runnable() {public void run() {
-			motor.setSpeed(manualSpeedLevel[0]);
-			if (reverse) {motor.forward();} else {motor.backward();}
-		}};
-		final Runnable rightLong= new Runnable() {public void run() {
-			motor.setSpeed(manualSpeedLevel[1]);
 		}};
 		final Runnable rightUp= new Runnable() {public void run() {
 			motor.stop();
 		}};
-		Listeners.left.setAllResponse(leftDown,leftShort,leftLong,leftUp);
-		Listeners.right.setAllResponse(rightDown,rightShort,rightLong,rightUp);
+		Listeners.left.setResponse(leftDown, leftUp);
+		Listeners.right.setResponse(rightDown,rightUp);
 	}
 
 	public boolean isInRange(int target) {
-		if (target < minTacho) {
+		if (hasRange) {
+			return true;
+		}
+		else if (target < minTacho) {
 			return false;
 		} else if (target >maxTacho) {
 			return false;
