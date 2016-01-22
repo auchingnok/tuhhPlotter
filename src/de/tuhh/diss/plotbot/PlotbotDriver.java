@@ -6,18 +6,24 @@ package de.tuhh.diss.plotbot;
 //from target worldSpace vector, calculates destination jointSpace vector
 
 public class PlotbotDriver {
-	private MotorController pen;
-	private MotorController arm;
-	private MotorController wheel;
-	private int p=0;
-	private int a=0;
-	private int w=0;
-	private int x=0; //current
-	private int y=0; //current
-	private int z=0; //current
+	private static MotorController pen;
+	private static MotorController arm;
+	private static MotorController wheel;
+	private static int p=0;
+	private static int a=0;
+	private static int w=0;
+	private static int x=0;
+	private static int y=0;
+	private static int z=0;
 	private int La = 80; //arm span
 	private int Rw = 28; //wheel radius
 	private int Rp = 5; //pen motor radius
+	private static Point3D[] pawPath;
+	private static Point3D[] speedPath;
+	private static int nextI;
+	private static boolean penStopped;
+	private static boolean armStopped;
+	private static boolean wheelStopped;
 	
 	public PlotbotDriver(MotorController refPen, MotorController refArm, MotorController refWheel) {
 		pen = refPen;
@@ -25,51 +31,69 @@ public class PlotbotDriver {
 		wheel = refWheel;
 	}
 	
-	public void reset() {
-		int p=0;
-		int a=0;
-		int w=0;
-		int x=0;
-		int y=0;
-		int z=0;
-	}
-	
-	public void getPAW() { //get resultant angles of all motors
+	private void getPAW() { //get resultant angles of all motors
 		p = (int) pen.getTotalAngle();
 		a = (int) arm.getTotalAngle();
 		w = (int) wheel.getTotalAngle();
 	}
 	
-	public void calX() {
+	public void calXYZ() {
 		x = (int) (La* Math.sin(arm.getTotalAngle()) );
-	}
-	
-	public void calY() {
 		y = (int) (Rw*w - La*Math.cos(a) + La);
-	}
-	
-	public void calZ() {
 		y = (int) (Rp*p);
 	}
 	
-	private void goToPAW(int pTarget, int aTarget, int wTarget) {
-		pen.setSpeed(10);
-		arm.setSpeed(80);
-		wheel.setSpeed(30);
-		pen.rotateTo(pTarget);
-		arm.rotateTo(aTarget);
-		wheel.rotateTo(wTarget);
+	public static void moveTo(Point3D targetPoint, Point3D speedVector) {
+		pen.setSpeed(speedVector.X);
+		arm.setSpeed(speedVector.Y);
+		wheel.setSpeed(speedVector.Z);
+		pen.rotateTo(targetPoint.X,true);
+		arm.rotateTo(targetPoint.Y,true);
+		wheel.rotateTo(targetPoint.Z,true);
 	}
 	
-	//move to XYZ in straight line as possible;
-	public void goToXYZ(int xTarget,int yTarget,int zTarget) {
-		int pTarget = zTarget/Rp;
-		int aTarget = (int) Math.asin(x/La);
-		int wTarget = (int) ((yTarget-La+La*Math.cos(aTarget))/Rw);
-		goToPAW(pTarget,aTarget,wTarget);
+//	public void followPath(Point3D[] pawPath, Point3D[] speedPath) {
+//		for (int i=0 ; i<pawPath.length;i++) {
+//			moveTo(pawPath[i], speedPath[i]);
+//		}
+//	}
+	
+	public void allMotorMoving() {
+		penStopped = false;
+		armStopped = false;
+		wheelStopped = false;
 	}
 	
-	public void plotLine() {
+	public static boolean allMotorHasStopped() {
+		if ((penStopped) && (armStopped) && (wheelStopped)) {
+			return true;
+		} else {return false;}
+	}
+	
+	public void followPath(Point3D[] ipawPath, Point3D[] ispeedPath) {
+		pawPath = ipawPath;
+		speedPath = ispeedPath;
+		nextI =1;
+		allMotorMoving();
+		Listeners.penEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
+			MainDisplay.setReadings(0, Listeners.penEncoder.getReading());
+		}});
+		Listeners.armEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
+			MainDisplay.setReadings(0, Listeners.penEncoder.getReading());
+		}});
+		Listeners.wheelEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
+			MainDisplay.setReadings(0, Listeners.penEncoder.getReading());
+		}});
 		
+		moveTo(pawPath[0], speedPath[0]);
+	}
+	
+	public static void continuePath() {
+		if (allMotorHasStopped()) {
+			if (nextI<pawPath.length) {
+			moveTo(pawPath[nextI], speedPath[nextI]);
+			nextI=nextI+1;
+			}
+		}
 	}
 }

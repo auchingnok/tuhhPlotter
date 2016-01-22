@@ -15,9 +15,6 @@ public class MotorListener implements RegulatedMotorListener{
 	
 	public void rotationStarted(RegulatedMotor motor,int i,boolean b,long l) {
 		blockStart.run();
-		if (printOutput) {
-			
-		}
 	}
 	
 	public void rotationStopped(RegulatedMotor motor,int i,boolean b,long l) {

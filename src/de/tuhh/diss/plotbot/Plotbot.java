@@ -98,7 +98,7 @@ public class Plotbot {
 				Button.ENTER.waitForPressAndRelease();
 				pen.calibrateMax();
 				pen.checkRange();
-				pen.rotateTo(0);
+				pen.rotateTo(0,false);
 				menu = Menu.SETUP;
 			}
 
@@ -118,7 +118,7 @@ public class Plotbot {
 				Button.ENTER.waitForPressAndRelease();
 				arm.calibrateMax();
 				arm.checkRange();
-				arm.rotateTo(0);
+				arm.rotateTo(0,false);
 				menu = Menu.SETUP;
 			}
 			
@@ -164,12 +164,12 @@ public class Plotbot {
 					case Button.ID_RIGHT:display.selectNextOption();
 					case Button.ID_ENTER : {
 						display.plot();
-						displayTachos();
+						//displayTachos();
 						switch (display.getChoice()) {
-						case 0: driver.goToXYZ(0, 230, 0);
-						case 1: driver.goToXYZ(5, 110, -20);
-						case 2: driver.goToXYZ(10, 110, 20);
-						case 3: driver.goToXYZ(-5, -50, 50);
+						case 0: driver.moveTo(new Point3D(0, 230, 0), new Point3D(30,30,30));
+						case 1: driver.moveTo(new Point3D(5, 110, -20),new Point3D(10,10,10));
+						case 2: driver.moveTo(new Point3D(10, 110, 20), new Point3D(10,10,10));
+						case 3: driver.moveTo(new Point3D(-5, -50, 50), new Point3D(10,10,10));
 						}
 					}
 					case Button.ID_ESCAPE: {
@@ -190,23 +190,23 @@ public class Plotbot {
 				} while (buttonID != Button.ID_ESCAPE);
 			}
 			case RESET:{
-				driver.goToXYZ(0, 0, 0);
+				driver.moveTo(new Point3D(0, 0, 0), new Point3D(30,30,30));
 				menu = Menu.MAIN;
 			}
 			}
 		}
 	}
 	
-	static void displayTachos() {
-		Listeners.penEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
-			display.setReadings(0, Listeners.penEncoder.getReading());
-		}});		
-		Listeners.armEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
-			display.setReadings(1, Listeners.armEncoder.getReading());
-		}});		
-		Listeners.wheelEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
-			display.setReadings(2, Listeners.wheelEncoder.getReading());
-		}});
-	}
+//	static void displayTachos() {
+//		Listeners.penEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
+//			display.setReadings(0, Listeners.penEncoder.getReading());
+//		}});		
+//		Listeners.armEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
+//			display.setReadings(1, Listeners.armEncoder.getReading());
+//		}});		
+//		Listeners.wheelEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
+//			display.setReadings(2, Listeners.wheelEncoder.getReading());
+//		}});
+//	}
 	
 }

@@ -11,7 +11,7 @@ public class MotorController {
 		//enable 3 speed level in manual drive mode
 		
 	private NXTRegulatedMotor motor; //motor being controlled
-	private double reduction =0; //gear reduction ratio
+	private int reduction =0; //gear reduction ratio
 	private int maxTacho=0; //limit value 1
 	private int minTacho=0; //limit value 2
 	
@@ -21,7 +21,7 @@ public class MotorController {
 	
 	private boolean reverse = false;
 	
-	public MotorController(NXTRegulatedMotor refMotor, int refSpeedFactor, double refReduction, boolean refReverse) {
+	public MotorController(NXTRegulatedMotor refMotor, int refSpeedFactor, int refReduction, boolean refReverse) {
 		motor = refMotor; 
 		speedFactor = refSpeedFactor;
 		manualStep = manualStep * speedFactor;
@@ -45,13 +45,13 @@ public class MotorController {
 	
 	public void calibrateMin() {
 		minTacho = motor.getTachoCount();
-		rotateTo(0);
+		rotateTo(0,false);
 	}
 	
 	public void calibrateMax() {
 		Button.ENTER.waitForPressAndRelease();
 		maxTacho = motor.getTachoCount();
-		rotateTo(0);
+		rotateTo(0,false);
 	}
 	
 	public void checkRange() { //make sure minTacho <= 0 <= maxTacho
@@ -111,13 +111,13 @@ public class MotorController {
 	}
 	
 	public void setSpeed(int r) {
-		motor.setSpeed(r);
+		motor.setSpeed(r*reduction);
 	}
 	
-	public void rotateTo(int target) {
+	public void rotateTo(int target, boolean quickReturn) {
 		//calculate actual rotation needed
 		int actualTarget = (int) (target * reduction);
-		if (isInRange(actualTarget)) {motor.rotateTo(actualTarget);};
+		if (isInRange(actualTarget)) {motor.rotateTo(actualTarget, quickReturn);};
 	}
 	
 	public NXTRegulatedMotor getMotor() {

@@ -4,12 +4,12 @@ import lejos.nxt.LCD;
 
 public class MainDisplay { //size 0..15, 0..7
 	//the properties below are in array form; each element occupies one row
-	private String[] header = {}; //elements that are stationary
-	private String[] options = {}; //items that are selected
-	private int currentOptionId = 0; //stores the index of the current option in array
-	private String[] varNames = {}; //name of variable under monitoring
-	private String[] varReadings = {}; //real time value of variable. 3 digits
-	private String[] userInputInfo = {}; //tell user what to do
+	private static String[] header = {}; //elements that are stationary
+	private static String[] options = {}; //items that are selected
+	private static int currentOptionId = 0; //stores the index of the current option in array
+	private static String[] varNames = {}; //name of variable under monitoring
+	private static String[] varReadings = {}; //real time value of variable. 3 digits
+	private static String[] userInputInfo = {}; //tell user what to do
 
 	public MainDisplay() {}
 
@@ -17,7 +17,7 @@ public class MainDisplay { //size 0..15, 0..7
 		return currentOptionId;
 	}
 
-	private void update() { //output all information to the screen
+	private static void update() { //output all information to the screen
 		LCD.clear();
 		//output all the info stored by for-loop every string arrays
 		//for options, add > or - symbols before them, according to currentOptionId	
@@ -76,7 +76,7 @@ public class MainDisplay { //size 0..15, 0..7
 					
 	}
 
-	public void setReadings(int index, int val) {
+	public static void setReadings(int index, int val) {
 		//set the corresponding values and names
 		//update screen
 		String valst=Integer.toString(val);
