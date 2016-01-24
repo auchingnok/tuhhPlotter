@@ -10,8 +10,8 @@ public class Path { //collection of Point3D
 	private static final double Ka = 84; //gear reduction
 	private static final double Kw = 5; //gear reduction
 	
-	private static final double penFreeTacho = -50;
-	private static final double penTouchTacho = -100; //values for pen to touch board
+	private static final double penFreeTacho = 50;
+	private static final double penTouchTacho = 100; //values for pen to touch board
 	private static final double armLeftLimitTacho = -4500;
 	private static final double armRightLimitTacho = 3700;
 	
