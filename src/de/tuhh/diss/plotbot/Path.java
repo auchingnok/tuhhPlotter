@@ -4,14 +4,14 @@ public class Path { //collection of Point3D
 	
 	private static final double La = 80; //arm span
 	private static final double Rw = 28; //wheel radius
-	private static final double Rp = 5; //pen motor radius
+	private static final double Rp = 1; //pen motor radius
 	
 	private static final double Kp = 1; //gear reduction
 	private static final double Ka = 84; //gear reduction
 	private static final double Kw = 5; //gear reduction
 	
-	private static final double penFreeTacho = 50;
-	private static final double penTouchTacho = 100; //values for pen to touch board
+	private static final double penFreeTacho = -100;
+	private static final double penTouchTacho = -300; //values for pen to touch board
 	private static final double armLeftLimitTacho = -4500;
 	private static final double armRightLimitTacho = 3700;
 	
@@ -74,13 +74,38 @@ public class Path { //collection of Point3D
 		return new Point3D(oldPosition.x, oldPosition.y, penTouchTacho);
 	}
 	
+	public static Point3D[] mergePath(Point3D[][] paths) { //merge several paths into one
+		int totalPathSize = 0;
+		for (int i=0; i<paths.length; i++) {
+			totalPathSize = totalPathSize + paths[i].length;
+		}
+		Point3D[] finalPath = new Point3D[totalPathSize];
+		int k =0; //index
+		for (int i=0; i<paths.length; i++) {
+			for (int j=0;j<paths[i].length; j++) {
+				finalPath[k] = paths[i][j];
+				k=k+1;
+			}
+		}
+		return finalPath;
+	}
+	
+	public static Point3D[] straightLinePath(Point3D startPoint, Point3D lineStart, Point3D lineEnd,int spacing) {
+		Point3D[] preparePath1 	= Path.straightLine(startPoint, penUp(startPoint), spacing); //move pen up
+		Point3D[] preparePath2 	= Path.straightLine(penUp(startPoint), penUp(lineStart), spacing); //hover pen to lineStart
+		Point3D[] downPath = Path.straightLine(penUp(lineStart), penDown(lineStart), spacing);
+		Point3D[] drawPath = Path.straightLine(penDown(lineStart), penDown(lineEnd), spacing);
+		Point3D[] upPath = Path.straightLine(penDown(lineEnd), penUp(lineEnd), spacing);
+		return  mergePath(new Point3D[][]{preparePath1,preparePath2,downPath,drawPath,upPath});
+	}
+	
 	public static Point3D[] rect(Point3D startPoint, Point3D cornerLowerLeft, double width, double height,int spacing) {
 		Point3D cornerUpperLeft = cornerLowerLeft.translate(0, height, 0);
 		Point3D cornerUpperRight = cornerLowerLeft.translate(width, height, 0);
 		Point3D cornerLowerRight = cornerLowerLeft.translate(width, 0, 0);
 		
 		Point3D[] preparePath1 	= Path.straightLine(startPoint, penUp(startPoint), spacing);
-		Point3D[] preparePath2 	= Path.straightLine(penUp(startPoint), cornerLowerLeft, spacing);
+		Point3D[] preparePath2 	= Path.straightLine(penUp(startPoint), penDown(cornerLowerLeft), spacing);
 		Point3D[] leftPath 		= Path.straightLine(penDown(cornerLowerLeft), penDown(cornerUpperLeft), spacing);
 		Point3D[] upPath 		= Path.straightLine(penDown(cornerUpperLeft), penDown(cornerUpperRight), spacing);
 		Point3D[] rightPath 	= Path.straightLine(penDown(cornerUpperRight), penDown(cornerLowerRight), spacing);
