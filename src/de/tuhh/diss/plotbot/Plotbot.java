@@ -109,6 +109,9 @@ public class Plotbot {
 		
 		//setup arm
 		display.setupArm1_3();
+		
+		Button.ENTER.waitForPressAndRelease();
+		
 		arm.setSpeed(100);
 		arm.backward();
 		SensorPort.S1.addSensorPortListener(new SensorPortListener(){
@@ -122,6 +125,8 @@ public class Plotbot {
 				arm.resetTachoCount();
 			}
 		});
+		
+		Button.ENTER.waitForPressAndRelease();
 //		Listeners.armEncoder.setStopResponse(new Runnable() {public void run(){ //link sensor output to the display
 //			display.setReadings(0, Listeners.armEncoder.getReading());
 //		}});
