@@ -4,16 +4,16 @@ public class Path { //collection of Point3D
 	
 	private static final double La = 80; //arm span
 	private static final double Rw = 28; //wheel radius
-	private static final double Rp = 1; //pen motor radius
+	private static final double Rp = 2; //pen motor radius
 	
-	private static final double Kp = 1; //gear reduction
+	private static final double Kp = 3; //gear reduction
 	private static final double Ka = 84; //gear reduction
 	private static final double Kw = 5; //gear reduction
 	
-	private static final double penFreeTacho = -100;
-	private static final double penTouchTacho = -300; //values for pen to touch board
-	private static final double armLeftLimitTacho = -4500;
-	private static final double armRightLimitTacho = 3700;
+	private static final double penFreeZ = 0;
+	private static final double penTouchZ = 0; //values for pen to touch board
+	//private static final double armLeftLimitTacho = -4500;
+	//private static final double armRightLimitTacho = 3700;
 	
 	//map path from world space to joint space
 	public static Point3D[] xyz2paw(Point3D[] xyzPath) {
@@ -22,12 +22,12 @@ public class Path { //collection of Point3D
 		for (int i =0; i<numOfPoints; i++) {
 			Point3D point = xyzPath[i];
 			double p = point.z/Rp;
-			double a = Math.asin(point.x/La);
-			double w = point.y-La+La*Math.cos(a)/Rw;
-			double pBeforeReduction = p*Kp;
-			double aBeforeReduction = a*Ka;
-			double wBeforeReduction = w*Kw;
-			pawPath[i] = new Point3D(pBeforeReduction,aBeforeReduction,wBeforeReduction);
+			double a = -Math.asin(point.x/La);
+			double w = (point.y+La-La*Math.cos(a)) /Rw;
+			double pDegBeforeReduction = 180*p*Kp/3.1415;
+			double aDegBeforeReduction = 180*a*Ka/3.1415;
+			double wDegBeforeReduction = 180*w*Kw/3.1415;
+			pawPath[i] = new Point3D(pDegBeforeReduction,aDegBeforeReduction,wDegBeforeReduction);
 		}
 		return pawPath;
 	}
@@ -48,7 +48,7 @@ public class Path { //collection of Point3D
 		return speedPath;
 	}
 	
-	//generate straight line path
+	//generate straight line path}
 	public static Point3D[] straightLine(Point3D ptStart, Point3D ptEnd, int spacing) { //generate straight path
 		int numOfSections = (int) Math.ceil(Point3D.distance(ptStart, ptEnd) /spacing);
 		int numOfPoints = numOfSections + 1;
@@ -67,11 +67,11 @@ public class Path { //collection of Point3D
 	}
 	
 	public static Point3D penUp(Point3D oldPosition) {
-		return new Point3D(oldPosition.x, oldPosition.y, penFreeTacho);
+		return new Point3D(oldPosition.x, oldPosition.y, penFreeZ);
 	}
 	
 	public static Point3D penDown(Point3D oldPosition) {
-		return new Point3D(oldPosition.x, oldPosition.y, penTouchTacho);
+		return new Point3D(oldPosition.x, oldPosition.y, penTouchZ);
 	}
 	
 	public static Point3D[] mergePath(Point3D[][] paths) { //merge several paths into one
