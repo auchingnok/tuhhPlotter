@@ -10,76 +10,58 @@ public class Path { //collection of Point3D
 	private static final double Ka = 84; //gear reduction
 	private static final double Kw = 5; //gear reduction
 	
-	private static final double penFreeZ = 0;
-	private static final double penTouchZ = 0; //values for pen to touch board
-	//private static final double armLeftLimitTacho = -4500;
-	//private static final double armRightLimitTacho = 3700;
-	
 	//map path from world space to joint space
-	public static Point3D[] xyz2paw(Point3D[] xyzPath) {
-		int numOfPoints = xyzPath.length;
-		Point3D[] pawPath = new Point3D[numOfPoints];
+	public static Point2D[] xy2aw(Point2D[] xyPath) {
+		int numOfPoints = xyPath.length;
+		Point2D[] awPath = new Point2D[numOfPoints];
 		for (int i =0; i<numOfPoints; i++) {
-			Point3D point = xyzPath[i];
-			double p = point.z/Rp;
+			Point2D point = xyPath[i];
 			double a = -Math.asin(point.x/La);
 			double w = (point.y+La-La*Math.cos(a)) /Rw;
-			double pDegBeforeReduction = 180*p*Kp/3.1415;
 			double aDegBeforeReduction = 180*a*Ka/3.1415;
 			double wDegBeforeReduction = 180*w*Kw/3.1415;
-			pawPath[i] = new Point3D(pDegBeforeReduction,aDegBeforeReduction,wDegBeforeReduction);
+			awPath[i] = new Point2D(aDegBeforeReduction,wDegBeforeReduction);
 		}
-		return pawPath;
+		return awPath;
 	}
 	
 	//generate joint space velocity from path (same start same stop algorithm)
-	public static Point3D[] pawSpeed(Point3D[] pawPath, int millisecond) { 
-		int pathSize = pawPath.length;
-		Point3D[] speedPath = new Point3D[pathSize];
+	public static Point2D[] awSpeed(Point2D[] awPath, int millisecond) { 
+		int pathSize = awPath.length;
+		Point2D[] speedPath = new Point2D[pathSize];
 		for (int i =0; i<pathSize-1; i++) {
-			Point3D point1 = pawPath[i];
-			Point3D point2 = pawPath[i+1];
-			int pSpeed = (int) Math.abs(point1.x-point2.x)*1000/millisecond;
-			int aSpeed = (int) Math.abs(point1.y-point2.y)*1000/millisecond;
-			int wSpeed = (int) Math.abs(point1.z-point2.z)*1000/millisecond;
-			speedPath[i] = new Point3D(pSpeed,aSpeed,wSpeed);
+			Point2D point1 = awPath[i];
+			Point2D point2 = awPath[i+1];
+			int aSpeed = (int) Math.abs(point1.x-point2.x)*1000/millisecond;
+			int wSpeed = (int) Math.abs(point1.y-point2.y)*1000/millisecond;
+			speedPath[i] = new Point2D(aSpeed,wSpeed);
 		}
 		speedPath[pathSize-1] = speedPath[pathSize-2];
 		return speedPath;
 	}
 	
 	//generate straight line path}
-	public static Point3D[] straightLine(Point3D ptStart, Point3D ptEnd, int spacing) { //generate straight path
-		int numOfSections = (int) Math.ceil(Point3D.distance(ptStart, ptEnd) /spacing);
+	public static Point2D[] straightLine(Point2D ptStart, Point2D ptEnd, int spacing) { //generate straight path
+		int numOfSections = (int) Math.ceil(Point2D.distance(ptStart, ptEnd) /spacing);
 		int numOfPoints = numOfSections + 1;
-		Point3D[] points = new Point3D[numOfPoints]; 
+		Point2D[] points = new Point2D[numOfPoints]; 
 		double xStep = (ptEnd.x - ptStart.x)/numOfSections;
 		double yStep = (ptEnd.y - ptStart.y)/numOfSections;
-		double zStep = (ptEnd.z - ptStart.z)/numOfSections;
 		for (int i =0; i<numOfPoints-1;i++) {
 			double xi = ptStart.x + i * xStep;
 			double yi = ptStart.y + i * yStep;
-			double zi = ptStart.z + i * zStep;
-			points[i] = new Point3D(xi,yi,zi);
+			points[i] = new Point2D(xi,yi);
 		}
 		points[numOfPoints-1] = ptEnd;
 		return points;
 	}
-	
-	public static Point3D penUp(Point3D oldPosition) {
-		return new Point3D(oldPosition.x, oldPosition.y, penFreeZ);
-	}
-	
-	public static Point3D penDown(Point3D oldPosition) {
-		return new Point3D(oldPosition.x, oldPosition.y, penTouchZ);
-	}
-	
-	public static Point3D[] mergePath(Point3D[][] paths) { //merge several paths into one
+
+	public static Point2D[] mergePath(Point2D[][] paths) { //merge several paths into one
 		int totalPathSize = 0;
 		for (int i=0; i<paths.length; i++) {
 			totalPathSize = totalPathSize + paths[i].length;
 		}
-		Point3D[] finalPath = new Point3D[totalPathSize];
+		Point2D[] finalPath = new Point2D[totalPathSize];
 		int k =0; //index
 		for (int i=0; i<paths.length; i++) {
 			for (int j=0;j<paths[i].length; j++) {
@@ -90,37 +72,17 @@ public class Path { //collection of Point3D
 		return finalPath;
 	}
 	
-	public static Point3D[] straightLinePath(Point3D startPoint, Point3D lineStart, Point3D lineEnd,int spacing) {
-		Point3D[] preparePath1 	= Path.straightLine(startPoint, penUp(startPoint), spacing); //move pen up
-		Point3D[] preparePath2 	= Path.straightLine(penUp(startPoint), penUp(lineStart), spacing); //hover pen to lineStart
-		Point3D[] downPath = Path.straightLine(penUp(lineStart), penDown(lineStart), spacing);
-		Point3D[] drawPath = Path.straightLine(penDown(lineStart), penDown(lineEnd), spacing);
-		Point3D[] upPath = Path.straightLine(penDown(lineEnd), penUp(lineEnd), spacing);
-		return  mergePath(new Point3D[][]{preparePath1,preparePath2,downPath,drawPath,upPath});
-	}
-	
-	public static Point3D[] rect(Point3D startPoint, Point3D cornerLowerLeft, double width, double height,int spacing) {
-		Point3D cornerUpperLeft = cornerLowerLeft.translate(0, height, 0);
-		Point3D cornerUpperRight = cornerLowerLeft.translate(width, height, 0);
-		Point3D cornerLowerRight = cornerLowerLeft.translate(width, 0, 0);
+	public static Point2D[] rect(Point2D startPoint, Point2D cornerLowerLeft, double width, double height,int spacing) {
+		Point2D cornerUpperLeft = cornerLowerLeft.translate(0, height);
+		Point2D cornerUpperRight = cornerLowerLeft.translate(width, height);
+		Point2D cornerLowerRight = cornerLowerLeft.translate(width, 0);
 		
-		Point3D[] preparePath1 	= Path.straightLine(startPoint, penUp(startPoint), spacing);
-		Point3D[] preparePath2 	= Path.straightLine(penUp(startPoint), penDown(cornerLowerLeft), spacing);
-		Point3D[] leftPath 		= Path.straightLine(penDown(cornerLowerLeft), penDown(cornerUpperLeft), spacing);
-		Point3D[] upPath 		= Path.straightLine(penDown(cornerUpperLeft), penDown(cornerUpperRight), spacing);
-		Point3D[] rightPath 	= Path.straightLine(penDown(cornerUpperRight), penDown(cornerLowerRight), spacing);
-		Point3D[] lowerPath 	= Path.straightLine(penDown(cornerLowerRight), penDown(cornerLowerLeft), spacing);
+		Point2D[] leftPath 		= Path.straightLine(cornerLowerLeft, cornerUpperLeft, spacing);
+		Point2D[] upPath 		= Path.straightLine(cornerUpperLeft, cornerUpperRight, spacing);
+		Point2D[] rightPath 	= Path.straightLine(cornerUpperRight, cornerLowerRight, spacing);
+		Point2D[] lowerPath 	= Path.straightLine(cornerLowerRight, cornerLowerLeft, spacing);
 		
-		int totalSize = preparePath1.length+preparePath2.length+leftPath.length+upPath.length+rightPath.length+lowerPath.length;
-		Point3D[] totalPath = new Point3D[totalSize];
-		System.arraycopy(preparePath1, 	0, totalPath, 0, 		preparePath1.length); //source,source start,target,target start, copy length
-		System.arraycopy(preparePath2, 	0, totalPath, preparePath1.length, 		preparePath2.length);
-		System.arraycopy(leftPath, 		0, totalPath, preparePath1.length+preparePath2.length, 		leftPath.length);
-		System.arraycopy(upPath, 		0, totalPath, preparePath1.length+preparePath2.length+leftPath.length, 		upPath.length);
-		System.arraycopy(rightPath, 	0, totalPath, preparePath1.length+preparePath2.length+leftPath.length+upPath.length, 		rightPath.length);
-		System.arraycopy(lowerPath, 	0, totalPath, preparePath1.length+preparePath2.length+leftPath.length+upPath.length+rightPath.length, 		lowerPath.length);
-		
-		return totalPath;
+		return mergePath(new Point2D[][]{leftPath,upPath,rightPath,lowerPath});
 	}
 
 

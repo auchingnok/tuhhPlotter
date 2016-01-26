@@ -44,7 +44,7 @@ public class MainDisplay { //size 0..15, 0..7
 		}
 	}
 
-	private void reset() {
+	private static void reset() {
 		//remove all buttons listeners
 		//set all properties to a zero length array;
 		currentOptionId = 0;
@@ -55,17 +55,6 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo = new String[0];
 	}
 
-	public void selectOption(int selection) {
-		//select next option, update option variable
-		//if no next option, select the first option
-		//update the screen
-		currentOptionId = selection;
-		
-		update();
-		LCD.drawString(Integer.toString(currentOptionId) , 0, 5);
-					
-	}
-
 	public static void setReadings(int index, int val) {
 		//set the corresponding values and names
 		//update screen
@@ -74,9 +63,13 @@ public class MainDisplay { //size 0..15, 0..7
 		update();
 	}
 
+	public static void setChosenOption(int choice) {
+		currentOptionId = choice;
+		update();
+	}
 	//below are methods to display each menus
 
-	public void welcomeScreen() {
+	public static void welcomeScreen() {
 		reset();
 		header = new String[6];
 		userInputInfo = new String[1];
@@ -90,173 +83,79 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[0] = "ENT: Continue";
 		update();		
 	}
-
-	public void mainMenu() {
-		reset();
-		header = new String[1];
-		options = new String[4];
-		userInputInfo = new String[3];
-		header[0] = "Main Menu";
-		options[0] ="Setup";
-		options[1] = "Manual Control";
-		options[2] = "Plot";
-		options[3] = "Reset";
-		userInputInfo[0] = ""; //blank row example
-		userInputInfo[1] = "L,R: Scroll";
-		userInputInfo[2] = "ENT: Continue";
-		update();
-	}
-	public void setupMenu() {
-		reset();
-		header = new String[1];
-		options = new String[3];
-		userInputInfo = new String[3];
-		currentOptionId = 0;
-		header[0] = "Setup Menu";
-		options[0] ="Pen";
-		options[1] = "Arm";
-		options[2] = "Light Sensor";
-		userInputInfo[0] = ""; //blank row example
-		userInputInfo[1] = "L,R: Scroll";
-		userInputInfo[2] = "ENT: Continue";
-		update();
-	}
 	
 	//setup pen 
 	
-	public void setupPen1_3() {
+	public static void setupPen() {
 		reset();
 		header = new String[3];
 		varNames = new String[1];
 		varReadings = new String[1];
-		userInputInfo = new String[4];
+		userInputInfo = new String[3];
 		header[0] = "Setup Pen";
-		header[1] = "Step 1/3";
-		header[2] = "Set zero pos";
+		header[1] = "Calibrate Zero Pos";
+		header[2] = "";
 		varNames[0] = "tacho";
 		userInputInfo[0] = "";
-		userInputInfo[1] = "L: Move Down";
-		userInputInfo[2] = "R: Move Up";
-		userInputInfo[3] = "ENT: Accept";
-		update();
-	}
-	public void setupPen2_3() {
-		header[1] = "Step 2/3";
-		header[2] = "Set Touch pos";
-		update();
-	}
-	public void setupPen3_3() {
-		header[1] = "Step 3/3";
-		header[2] = "Set Free pos";
+		userInputInfo[1] = "";
+		userInputInfo[2] = "Please Wait...";
 		update();
 	}
 	
 	//setup arm
 	
-	public void setupArm1_3() {
+	public static void setupArm() {
 		reset();
 		header = new String[3];
 		varNames = new String[1];
 		varReadings = new String[1];
 		userInputInfo = new String[4];
 		header[0] = "Setup Arm";
-		header[1] = "Step 1/3";
-		header[2] = "Set zero pos";
+		header[1] = "";
+		header[2] = "Set Zero Pos";
 		varNames[0] = "tacho";
 		userInputInfo[0] = "";
-		userInputInfo[1] = "L: Move Left";
-		userInputInfo[2] = "R: Move Right";
-		userInputInfo[3] = "ENT: Accept";
+		userInputInfo[1] = "";
+		userInputInfo[2] = "ENT: Calibrate";
+		userInputInfo[3] = "ESC: Skip";
 		update();
 	}
-	public void setupArm2_3() {
-		header[1] = "Step 2/3";
-		header[2] = "Set Limit 1";
-		update();
-	}
-	public void setupArm3_3() {
-		header[1] = "Step 3/3";
-		header[2] = "Set Limit 2";
+	
+	public static void setupArmWait() {
+		userInputInfo[2] = "Please Wait...";
+		userInputInfo[3] = "";
 		update();
 	}
 	
 	//setup light
 	
-	public void setupLight1_2() {
+	public static void setupLight() {
 		reset();
 		header = new String[3];
 		varNames = new String[1];
 		varReadings = new String[1];
 		userInputInfo = new String[4];
-		header[0] = "Setup Light";
-		header[1] = "Step 1/2";
-		header[2] = "Set Limit 1";
+		header[0] = "Setup Y Pos";
+		header[1] = "";
+		header[2] = "";
 		varNames[0] = "read";
-		userInputInfo[0] = "ESC: ToggleLight";
-		userInputInfo[1] = "L: Forward";
-		userInputInfo[2] = "R: Backward";
-		userInputInfo[3] = "ENT: Accept";
+		userInputInfo[0] = "";
+		userInputInfo[1] = "";
+		userInputInfo[2] = "ENT: Calibrate";
+		userInputInfo[3] = "";
 		update();
 	}
-	public void setupLight2_2() {
-		header[1] = "Step 2/2";
-		header[2] = "Set Limit 2";
-		update();
-	}
-	public void manualControl() {
+
+	public static void plotMenu() {
 		reset();
 		header = new String[1];
-		options = new String[3];
-		userInputInfo = new String[4];
-		header[0] = "Manual Control";
-		options[0] = "Move X";
-		options[1] = "Move Y";
-		options[2] = "Move Z";
-		userInputInfo[0] = "L: -";
-		userInputInfo[1] = "R: +";
-		userInputInfo[2] = "ENT: Scroll";
-		userInputInfo[3] = "ESC: Finish";
-		update();
-	}
-	public void plotMenu() {
-		reset();
-		header = new String[1];
-		options = new String[4];
-		userInputInfo = new String[3];
+		options = new String[2];
+		userInputInfo = new String[2];
 		header[0] = "Plot Menu";
-		options[0] = "goto Pos1";
-		options[1] = "goto Pos2";
-		options[2] = "goto Pos3";
-		options[3] = "goto Pos4";
+		options[0] = "plot Rect";
+		options[1] = "plot TUHH";
 		userInputInfo[0] = "L,R: Scroll";
 		userInputInfo[1] = "ENT: Plot";
-		userInputInfo[2] = "ECS: Cancel";
 		update();
 	}
-	public void plot() {
-		reset();
-		header = new String[1];
-		varNames = new String[3];
-		varReadings = new String[3];
-		userInputInfo = new String[4];
-		currentOptionId = 0;
-		header[0] = "Plotting Line";
-		varNames[0] = "X";
-		varNames[1] = "Y";
-		varNames[2] = "Z";
-		userInputInfo[0] = "L: Step Back";
-		userInputInfo[1] = "R: Step Forth";
-		userInputInfo[2] = "ENT:Pause";
-		userInputInfo[3] = "ESC: Abort";
-		update();
-	}
-	
-	public void resetting() {
-		reset();
-		header = new String[1];
-		header[0] = "Resetting...";
-		update();
-	}
-
-
 }
