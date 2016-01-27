@@ -27,7 +27,7 @@ public class Plotbot {
 	private static int xAbsLimit = 60; //i.e. range of x is from  -60mm to +60mm 
 	
 	private static int penUp = 0;
-	private static int penDown = -300;
+	private static int penDown = -350;
 	
 	public static void main(String[] args) {
 		
@@ -155,24 +155,23 @@ public class Plotbot {
 	}
 
 	static void followPoints(Point2D[] points) {
-		
-	}
-	
-	static void followPaths(Point2D[][] awPaths) {
-		for (int i=0; i<awPaths.length;i++) {
+		for (int i=0;i<points.length;i=i+2) {
+			//pre-generate path
+			Point2D[] linePath = Path.straightLine(points[i], points[i+1], 1);
+			Point2D[] awPath = Path.xy2aw(linePath);
+			Point2D[] speedPath = Path.awSpeed(awPath, 100);
 			pen.rotateTo(penUp);
-			arm.rotateTo(awPaths[i][0].X);
-			wheel.rotateTo(awPaths[i][0].Y);
-			Point2D[] speedPath = Path.awSpeed(awPaths[i], 100);
+			arm.rotateTo(awPath[0].X);
+			wheel.rotateTo(awPath[0].Y);
 			pen.rotateTo(penDown);
-			followPath(awPaths[i],speedPath, 200);
+			followPath(awPath,speedPath,200);
 		}
 	}
 	
 	static void followPath(Point2D[] awPath, Point2D[] speedPath, int millisecondInterval) {
 		for (int i=0;i< awPath.length;i++) {
-			if (speedPath[i].x == 0) {arm.stop();}
-			if (speedPath[i].y == 0) {wheel.stop();}
+//			if (speedPath[i].x == 0) {arm.stop();}
+//			if (speedPath[i].y == 0) {wheel.stop();}
 			arm.setSpeed(speedPath[i].X);
 			wheel.setSpeed(speedPath[i].Y);
 			arm.rotateTo( awPath[i].X,true);
