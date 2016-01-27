@@ -137,12 +137,12 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo = new String[4];
 		header[0] = "Setup Y Pos";
 		header[1] = "";
-		header[2] = "";
-		varNames[0] = "read";
+		header[2] = "Read Dark";
+		varNames[0] = "intensity";
 		userInputInfo[0] = "";
 		userInputInfo[1] = "";
 		userInputInfo[2] = "ENT: Calibrate";
-		userInputInfo[3] = "";
+		userInputInfo[3] = "ESC: Skip";
 		update();
 	}
 

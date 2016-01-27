@@ -1,12 +1,8 @@
 package de.tuhh.diss.plotbot;
 
 public class Path { //collection of Point3D
-	
 	private static final double La = 80; //arm span
 	private static final double Rw = 28; //wheel radius
-	private static final double Rp = 2; //pen motor radius
-	
-	private static final double Kp = 3; //gear reduction
 	private static final double Ka = 84; //gear reduction
 	private static final double Kw = 5; //gear reduction
 	
@@ -25,7 +21,7 @@ public class Path { //collection of Point3D
 		return awPath;
 	}
 	
-	//generate joint space velocity from path (same start same stop algorithm)
+	//generate joint space velocity from path (all start all stop algorithm)
 	public static Point2D[] awSpeed(Point2D[] awPath, int millisecond) { 
 		int pathSize = awPath.length;
 		Point2D[] speedPath = new Point2D[pathSize];

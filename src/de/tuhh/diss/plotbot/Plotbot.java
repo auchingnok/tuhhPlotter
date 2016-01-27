@@ -42,16 +42,6 @@ public class Plotbot {
 		do {
 			MainDisplay.plotMenu();
 			int choice = Button.waitForAnyPress();
-			if (choice == Button.ID_LEFT) {
-				plotChoice--;
-				if (plotChoice <0) {plotChoice = 1;}
-				MainDisplay.setChosenOption(plotChoice);
-			}
-			if (choice == Button.ID_RIGHT) {
-				plotChoice++;
-				if (plotChoice > 1) {plotChoice = 0;}
-				MainDisplay.setChosenOption(plotChoice);
-			}
 			if (choice == Button.ID_ENTER) {
 				//Point3D[] straightPath = Path.straightLine(new Point3D(0,0), new  Point3D(50,0), 1);
 				if (plotChoice == 0) { //plot rectangle
@@ -65,6 +55,16 @@ public class Plotbot {
 				} else {	//plot TUHH
 					
 				}
+			}
+			if (choice == Button.ID_LEFT) {
+				plotChoice--;
+				if (plotChoice <0) {plotChoice = 1;}
+				MainDisplay.setChosenOption(plotChoice);
+			}
+			if (choice == Button.ID_RIGHT) {
+				plotChoice++;
+				if (plotChoice > 1) {plotChoice = 0;}
+				MainDisplay.setChosenOption(plotChoice);
 			}
 		} while (true);
 
@@ -128,18 +128,24 @@ public class Plotbot {
 	
 	static void setupY() {
 		MainDisplay.setupLight();
-		//update light values
-		SensorPort.S3.addSensorPortListener(new SensorPortListener(){
-			public void stateChanged(SensorPort aSource, int aOldValue, int aNewValue) {
-				MainDisplay.setReadings(0, SensorPort.S3.readValue());
-			}
-		});
+		if (Button.waitForAnyPress()==Button.ID_ESCAPE) {return;}
+		Delay.msDelay(1000);
+		while (Button.ENTER.isUp()){
+			MainDisplay.setReadings(0, SensorPort.S3.readValue());
+			Delay.msDelay(200);
+		}
 		
-		Button.ENTER.waitForPressAndRelease(); //get dark reading
 		int dark = SensorPort.S3.readValue();
 		wheel.setSpeed(50);
-		wheel.forward();
+		wheel.rotate(300,true);
+		while (Button.ENTER.isUp()){
+			MainDisplay.setReadings(0, SensorPort.S3.readValue());
+			Delay.msDelay(200);
+		}
+		MainDisplay.setReadings(0, SensorPort.S3.readValue());
+		wheel.rotate(-300,true);
 		while (!yIsCalibrated) {
+			MainDisplay.setReadings(0, SensorPort.S3.readValue());
 			if (Math.abs(SensorPort.S3.readValue()-dark)>20) {
 				wheel.stop();
 				wheel.resetTachoCount();
@@ -148,6 +154,21 @@ public class Plotbot {
 		}
 	}
 
+	static void followPoints(Point2D[] points) {
+		
+	}
+	
+	static void followPaths(Point2D[][] awPaths) {
+		for (int i=0; i<awPaths.length;i++) {
+			pen.rotateTo(penUp);
+			arm.rotateTo(awPaths[i][0].X);
+			wheel.rotateTo(awPaths[i][0].Y);
+			Point2D[] speedPath = Path.awSpeed(awPaths[i], 100);
+			pen.rotateTo(penDown);
+			followPath(awPaths[i],speedPath, 200);
+		}
+	}
+	
 	static void followPath(Point2D[] awPath, Point2D[] speedPath, int millisecondInterval) {
 		for (int i=0;i< awPath.length;i++) {
 			if (speedPath[i].x == 0) {arm.stop();}
@@ -157,16 +178,6 @@ public class Plotbot {
 			arm.rotateTo( awPath[i].X,true);
 			wheel.rotateTo( awPath[i].Y,true);
 			Delay.msDelay(millisecondInterval);
-		}
-	}
-	
-	static void followPaths(Point2D[][] awPaths) {
-		for (int i=0; i<awPaths.length;i++) {
-			pen.rotateTo(penUp);
-			arm.rotateTo(awPaths[i][0].X);
-			wheel.rotateTo(awPaths[i][0].Y);
-			followPath(awPaths[i]);
-			
 		}
 	}
 	
