@@ -24,15 +24,18 @@ public class Plotbot {
 	private static boolean penIsTouched = false;
 	private static boolean yIsCalibrated = false;
 	
-	private static int xAbsLimit = 60; //i.e. range of x is from  -60mm to +60mm 
+	private static int sizeDefault = 30;
+	private static int sizeMin = 20;
+	private static int sizeMax = 40;
+	private static int sizeStep = 5;
 	
 	private static int penUp = 0;
 	private static int penDown = -350;
 	
 	public static void main(String[] args) {
 		
-		MainDisplay.welcomeScreen();
-		Button.ENTER.waitForPressAndRelease();
+		//MainDisplay.welcomeScreen();
+		//Button.ENTER.waitForPressAndRelease();
 		
 		setupPen();
 		setupArm();
@@ -42,18 +45,21 @@ public class Plotbot {
 		do {
 			MainDisplay.plotMenu();
 			int choice = Button.waitForAnyPress();
+			Delay.msDelay(800);
 			if (choice == Button.ID_ENTER) {
-				//Point3D[] straightPath = Path.straightLine(new Point3D(0,0), new  Point3D(50,0), 1);
 				if (plotChoice == 0) { //plot rectangle
-					Point2D[] rectPath = Path.rect(Point2D.zero(), Point2D.zero(), 70, 80, 1);
-					Point2D[] awPath = Path.xy2aw(rectPath);
-					Point2D[] speedPath = Path.awSpeed(awPath, 100);
-					pen.rotateTo(-400);
-					followPath(awPath,speedPath,200);
-					Button.ENTER.waitForPressAndRelease();
-					PlotFigures.reset();
+					int size = readSizeOfFigure();
+					int movePeriodMs = 150;
+					int cyclePeriodMs = 200;
+					Point2D[] points = PlotFigures.rect(size, 20);
+					followPoints(points,movePeriodMs,cyclePeriodMs);
 				} else {	//plot TUHH
-					
+					int size = readSizeOfFigure();
+					int letterClearance = 10;
+					int movePeriodMs = 150;
+					int cyclePeriodMs = 200;
+					Point2D[] points = PlotFigures.logoTUHH(size, letterClearance);
+					followPoints(points,movePeriodMs,cyclePeriodMs);
 				}
 			}
 			if (choice == Button.ID_LEFT) {
@@ -98,6 +104,7 @@ public class Plotbot {
 	static void setupArm() {
 		MainDisplay.setupArm();
 		int buttonPressed = Button.waitForAnyPress();
+		Delay.msDelay(1000);
 		switch (buttonPressed) {
 		case Button.ID_ENTER: //if re-calibration is required
 			MainDisplay.setupArmWait();
@@ -134,7 +141,7 @@ public class Plotbot {
 			MainDisplay.setReadings(0, SensorPort.S3.readValue());
 			Delay.msDelay(200);
 		}
-		
+		Delay.msDelay(200);
 		int dark = SensorPort.S3.readValue();
 		wheel.setSpeed(50);
 		wheel.rotate(300,true);
@@ -154,24 +161,54 @@ public class Plotbot {
 		}
 	}
 
-	static void followPoints(Point2D[] points) {
+	static int readSizeOfFigure() {
+		MainDisplay.sizeOfFigures();
+		int size=sizeDefault;
+		MainDisplay.setReadings(0, size);
+		boolean cont = true;
+		do {
+			int choice = Button.waitForAnyPress();
+			Delay.msDelay(1000);
+			if (choice == Button.ID_ENTER) {
+				cont = false;
+			}
+			if (choice == Button.ID_LEFT) {
+				size = size - sizeStep;
+				if (size < sizeMin) {size = sizeMin;}
+				MainDisplay.setReadings(0, size);
+			}
+			if (choice == Button.ID_RIGHT) {
+				size = size + sizeStep;
+				if (size > sizeMax) {size = sizeMax;}
+				MainDisplay.setReadings(0, size);
+			} 
+		} while (cont);
+		return size;
+	}
+	
+	static void followPoints(Point2D[] points,int movePeriodMs,int cyclePeriodMs) {
 		for (int i=0;i<points.length;i=i+2) {
-			//pre-generate path
-			Point2D[] linePath = Path.straightLine(points[i], points[i+1], 1);
-			Point2D[] awPath = Path.xy2aw(linePath);
-			Point2D[] speedPath = Path.awSpeed(awPath, 100);
-			pen.rotateTo(penUp);
+			Point2D startPoint = points[i];
+			Point2D endPoint = points[i+1];
+			Point2D[] xyPath = Path.straightLine(startPoint, endPoint, 1);
+			Point2D[] awPath = Path.xy2aw(xyPath);
+			Point2D[] speedPath = Path.awSpeed(awPath, movePeriodMs);
+			if ( (arm.getTachoCount() != awPath[0].X) || (wheel.getTachoCount() != awPath[0].Y)) {
+				pen.rotateTo(penUp);
+				arm.setSpeed(1000);
+				wheel.setSpeed(500);
+				arm.rotateTo(awPath[0].X);
+				wheel.rotateTo(awPath[0].Y);	
+			}
 			arm.rotateTo(awPath[0].X);
 			wheel.rotateTo(awPath[0].Y);
 			pen.rotateTo(penDown);
-			followPath(awPath,speedPath,200);
+			followPath(awPath,speedPath,cyclePeriodMs);
 		}
 	}
 	
 	static void followPath(Point2D[] awPath, Point2D[] speedPath, int millisecondInterval) {
 		for (int i=0;i< awPath.length;i++) {
-//			if (speedPath[i].x == 0) {arm.stop();}
-//			if (speedPath[i].y == 0) {wheel.stop();}
 			arm.setSpeed(speedPath[i].X);
 			wheel.setSpeed(speedPath[i].Y);
 			arm.rotateTo( awPath[i].X,true);

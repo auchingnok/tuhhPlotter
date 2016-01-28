@@ -1,81 +1,89 @@
 package de.tuhh.diss.plotbot;
 
-import lejos.nxt.Motor;
-import lejos.nxt.NXTRegulatedMotor;
-import lejos.util.Delay;
-
 public class PlotFigures {
+	public static final double boardHeight = 230;
 
-	public static NXTRegulatedMotor pen = Motor.B;
-	public static NXTRegulatedMotor arm= Motor.A;
-	public static NXTRegulatedMotor wheel= Motor.C;
+	//places the points of the letters and the rectangle to the correct position
+	public static Point2D[] logoTUHH(double size, double space) {
+		double charWidth = 1 * size;
 
+		Point2D[] T = Letter.T(charWidth,size);
+		Point2D[] correctedT = shiftFigure(rotateFigure(T, -90), boardHeight-(1*space+0.5*charWidth));
 
-	public static int penDown = -300; //has to be defined after trying
-	public static int penUp = 0; //has to be defined after trying
+		Point2D[] U = Letter.U(charWidth,size);
+		Point2D[] correctedU = shiftFigure(rotateFigure(U, -90), boardHeight-(2*space+1.5*charWidth));
 
-	public static int wheelSpeed;
-	public static int armSpeed = 300;
+		Point2D[] H1 = Letter.H(charWidth,size);
+		Point2D[] correctedH1 = shiftFigure(rotateFigure(H1, -90), boardHeight-(3*space+2.5*charWidth));
 
-	//draws a vertical line from point (x,y) with the length "length"
-	//the parameter "length" is positive if it shows in positive y direction
-	public static void drawVLine(double x, double y,double length){
-		pen.rotateTo(penUp);
-		arm.rotateTo((int) Calculations.calcAngleArm(x));
-		wheel.rotateTo((int) Calculations.calcAngleWheel(y-Math.abs(Calculations.calcDeltaY(x))));
-		pen.rotateTo(penDown);
-		wheel.rotate((int) Calculations.calcAngleWheel(length));
-		pen.rotateTo(penUp);
+		Point2D[] H2 = Letter.H(charWidth,size);
+		Point2D[] correctedH2 = shiftFigure(rotateFigure(H2, -90), boardHeight-(4*space+3.5*charWidth));
+
+		double borderWidth = 1*space + size;
+		double borderHeight = 4*charWidth + 5*space;
+		Point2D[] border = rect(borderWidth, borderHeight);
+
+		int numOfTotalPoints = T.length + U.length + 2* H1.length + border.length;
+		Point2D[] logoTUHH = new Point2D[numOfTotalPoints];
+		System.arraycopy(correctedT, 0, logoTUHH, 0, T.length);
+		System.arraycopy(correctedU, 0, logoTUHH, T.length, U.length);
+		System.arraycopy(correctedH1, 0, logoTUHH, T.length+U.length, H1.length);
+		System.arraycopy(correctedH2, 0, logoTUHH, T.length+U.length+H1.length, H2.length);
+		System.arraycopy(border, 0, logoTUHH, T.length+U.length+H1.length+H2.length, border.length);
+
+		return logoTUHH;
 	}
 
-	//draws a horizontal line at position Y with the length "length"
-	public static void drawHLine(double y, double length){
-		int armAngle = (int) Calculations.calcAngleArm(-length/2);
-		int deltaY = (int) Math.abs(Calculations.calcDeltaY(length/2));
-		int wheelAngleStart = (int) Calculations.calcAngleWheel(y+deltaY);
-		int wheelAngleMiddle = (int) Calculations.calcAngleWheel(y);
-		//int wheelAngleEnd = (int) Calculations.calcAngleWheel(y+deltaY);
-		pen.rotateTo(penUp);
-		arm.rotateTo(-armAngle);
-		wheel.rotateTo(wheelAngleStart);
-		//at start position
-		
-		pen.rotateTo(penDown);
-		arm.setSpeed(PlotFigures.armSpeed);
-		wheel.setSpeed(PlotFigures.wheelMotorSpeed());
-		wheel.rotateTo(wheelAngleMiddle, true);
-
-		while (arm.getTachoCount()<0){
-			wheel.setSpeed(PlotFigures.wheelMotorSpeed());
-			arm.forward();
-			wheel.backward();
-			Delay.msDelay(1000);
-		}
-		
-		//Button.ENTER.waitForPressAndRelease();
-
-		wheel.rotateTo((int) Calculations.calcAngleWheel(y+Math.abs(Calculations.calcDeltaY(length/2))), true);
-		while(wheel.isMoving()){
-			wheel.setSpeed(wheelMotorSpeed());
-		}
-	}
-
-	/*
-	 * calculates the motor speed of the wheels for compensating deltaY while arm is moving
-	 * calculated from the following equation:
-	 * deltaY_dot (caused by arm) != wheelSpeed
-	 */
-	public static int wheelMotorSpeed(){
-		wheelSpeed = (int)(Calculations.Kw*(Calculations.La)/(Calculations.Rw *3.1415)*Math.sin(arm.getTachoCount()*3.1415/(180*Calculations.Ka))*armSpeed); 
-		return wheelSpeed;
+	public static Point2D[] plotT(double size, double charWidth) {
+		return new Point2D[]{Point2D.zero()};
 	}
 	
-	public static void reset() {
-		pen.setSpeed(500);
-		arm.setSpeed(500);
-		pen.rotateTo(penUp);
-		arm.rotateTo(0);
-		wheel.rotateTo(0);
+	public static Point2D[] plotU(double size, double charWidth) {
+		return new Point2D[]{Point2D.zero()};
 	}
+	
+	public static Point2D[] plotH(double size, double charWidth) {
+		return new Point2D[]{Point2D.zero()};
+	}
+	
+	public static Point2D[] rect(double width, double height) {
+		Point2D cornerUpperLeft = new Point2D (-width/2, 230);
+		Point2D cornerUpperRight = cornerUpperLeft.translate(width,0);
+		Point2D cornerLowerRight = cornerUpperLeft.translate(width, -height);
+		Point2D cornerLowerLeft = cornerUpperLeft.translate(0, -height);
+		return new Point2D[]{
+				cornerUpperLeft,cornerUpperRight,
+				cornerUpperRight,cornerLowerRight,
+				cornerLowerRight,cornerLowerLeft,
+				cornerLowerLeft,cornerUpperLeft
+		};
+	}
+	
+	// rotates all points of a figure anti-clockwise around the origin
+	public static Point2D[] rotateFigure(Point2D[] pointsOfFigure, double degree) {
+		for (int i = 0; i < pointsOfFigure.length; i++) {
+			double x = pointsOfFigure[i].x;
+			double y = pointsOfFigure[i].y;
+			pointsOfFigure[i].x = Math.cos(degree * 3.1415 / 180) * x - Math.sin(degree * 3.1415 / 180) * y;
+			pointsOfFigure[i].y = Math.sin(degree * 3.1415 / 180) * x + Math.cos(degree * 3.1415 / 180) * y;
+			pointsOfFigure[i].updateX();
+			pointsOfFigure[i].updateY();
+		}
+		return pointsOfFigure; //rotated 
+	}
+
+	//shifts all points of one figure for a certain displacement of y
+	public static Point2D[] shiftFigure(Point2D[] pointsOfFigure, double displacementY){
+		for (int i=0; i < pointsOfFigure.length; i++){
+			//pointsOfFigure[i].x = pointsOfFigure[i].x;
+			pointsOfFigure[i].y = pointsOfFigure[i].y + displacementY;
+			//pointsOfFigure[i].updateX();
+			pointsOfFigure[i].updateY();
+		}
+		return pointsOfFigure; //shifted
+	}
+
 }
+
+
 

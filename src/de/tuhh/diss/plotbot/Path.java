@@ -68,6 +68,23 @@ public class Path { //collection of Point3D
 		return finalPath;
 	}
 	
+	/*
+	public static Point2D[] rect(double width, double height,int spacing) {
+		 Point2D cornerUpperLeft = new Point2D (230, -width/2);
+		 Point2D cornerUpperRight = cornerUpperLeft.translate(0, width);
+		 Point2D cornerLowerRight = cornerUpperLeft.translate(width, -height);
+		 Point2D cornerLowerLeft = cornerUpperLeft.translate(0, -height);
+
+		 Point2D[] upPath = Path.straightLine(cornerUpperLeft, cornerUpperRight, spacing);
+		 Point2D[] rightPath = Path.straightLine(cornerUpperRight, cornerLowerRight, spacing);
+		 Point2D[] lowerPath = Path.straightLine(cornerLowerRight, cornerLowerLeft, spacing);
+		 Point2D[] leftPath = Path.straightLine(cornerLowerLeft, cornerUpperLeft, spacing);
+		 
+		 return mergePath(new Point2D[][]{upPath,rightPath,lowerPath,leftPath});
+	}
+	*/
+	
+	/*
 	public static Point2D[] rect(Point2D startPoint, Point2D cornerLowerLeft, double width, double height,int spacing) {
 		Point2D cornerUpperLeft = cornerLowerLeft.translate(0, height);
 		Point2D cornerUpperRight = cornerLowerLeft.translate(width, height);
@@ -79,7 +96,7 @@ public class Path { //collection of Point3D
 		Point2D[] lowerPath 	= Path.straightLine(cornerLowerRight, cornerLowerLeft, spacing);
 		
 		return mergePath(new Point2D[][]{leftPath,upPath,rightPath,lowerPath});
-	}
+	}*/
 
 
 }

@@ -158,4 +158,24 @@ public class MainDisplay { //size 0..15, 0..7
 		userInputInfo[1] = "ENT: Plot";
 		update();
 	}
+	
+	//size menu
+	 public static void sizeOfFigures() {
+	 reset();
+	 header = new String[1];
+	 options = new String[0];
+	 varNames = new String[1];
+	 varReadings = new String[1];
+	 userInputInfo = new String[2];
+	 header[0] = "Size of Figure";
+	 header[1]= "";
+	 varNames[1] = "current size:";
+	 varReadings[1] = "Plotbot.sizeOfPlot";
+	 userInputInfo[0] = "";
+	 userInputInfo[1] = "L: decrease";
+	 userInputInfo[2] = "R: increase";
+	 userInputInfo[3] = "ENT: Plot";
+	 update();
+	 }
+	 
 }
