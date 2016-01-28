@@ -5,7 +5,7 @@ public class PlotFigures {
 
 	//places the points of the letters and the rectangle to the correct position
 	public static Point2D[] logoTUHH(double size, double space) {
-		double charWidth = 1 * size;
+		double charWidth = 0.5 * size;
 
 		Point2D[] T = Letter.T(charWidth,size);
 		Point2D[] correctedT = shiftFigure(rotateFigure(T, -90), boardHeight-(1*space+0.5*charWidth));
@@ -19,7 +19,7 @@ public class PlotFigures {
 		Point2D[] H2 = Letter.H(charWidth,size);
 		Point2D[] correctedH2 = shiftFigure(rotateFigure(H2, -90), boardHeight-(4*space+3.5*charWidth));
 
-		double borderWidth = 1*space + size;
+		double borderWidth = 2*space + size;
 		double borderHeight = 4*charWidth + 5*space;
 		Point2D[] border = rect(borderWidth, borderHeight);
 

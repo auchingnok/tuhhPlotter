@@ -18,62 +18,55 @@ public class Plotbot {
 	private static TouchSensor penTouch  = new TouchSensor(SensorPort.S2);
 	private static TouchSensor armTouch = new TouchSensor(SensorPort.S1); 
 
-	private static int armRightLimitTacho = 4900;
+	private static int armRightLimitTacho = 5000;
 	private static boolean armIsTouched = false;
 	private static boolean armIsCalibrated = false;
 	private static boolean penIsTouched = false;
 	private static boolean yIsCalibrated = false;
 	
-	private static int sizeDefault = 30;
-	private static int sizeMin = 20;
-	private static int sizeMax = 40;
-	private static int sizeStep = 5;
+	private static int sizeDefault = 50;
+	private static int sizeMin = 10;
+	private static int sizeMax = 90;
+	private static int sizeStep = 10;
 	
-	private static int penUp = 0;
+	private static int penUp = -100;
 	private static int penDown = -350;
+	
+	private static int movePeriodMs = 120;
+	private static int cyclePeriodMs = 150;
 	
 	public static void main(String[] args) {
 		
-		//MainDisplay.welcomeScreen();
-		//Button.ENTER.waitForPressAndRelease();
+		MainDisplay.welcomeScreen();
+		Button.ENTER.waitForPressAndRelease();
 		
 		setupPen();
 		setupArm();
 		setupY();
 		
-		int plotChoice = 0;
-		do {
-			MainDisplay.plotMenu();
-			int choice = Button.waitForAnyPress();
-			Delay.msDelay(800);
-			if (choice == Button.ID_ENTER) {
-				if (plotChoice == 0) { //plot rectangle
-					int size = readSizeOfFigure();
-					int movePeriodMs = 150;
-					int cyclePeriodMs = 200;
-					Point2D[] points = PlotFigures.rect(size, 20);
-					followPoints(points,movePeriodMs,cyclePeriodMs);
-				} else {	//plot TUHH
-					int size = readSizeOfFigure();
-					int letterClearance = 10;
-					int movePeriodMs = 150;
-					int cyclePeriodMs = 200;
-					Point2D[] points = PlotFigures.logoTUHH(size, letterClearance);
-					followPoints(points,movePeriodMs,cyclePeriodMs);
-				}
-			}
-			if (choice == Button.ID_LEFT) {
-				plotChoice--;
-				if (plotChoice <0) {plotChoice = 1;}
-				MainDisplay.setChosenOption(plotChoice);
-			}
-			if (choice == Button.ID_RIGHT) {
-				plotChoice++;
-				if (plotChoice > 1) {plotChoice = 0;}
-				MainDisplay.setChosenOption(plotChoice);
-			}
-		} while (true);
-
+		boolean cont = false;
+		MainDisplay.plotMenu();
+		int choice = Button.waitForAnyPress();
+		Delay.msDelay(800);
+		if (choice == Button.ID_LEFT) {
+			int size = readSizeOfFigure(0);
+			Point2D[] points = PlotFigures.rect(size, size);
+			followPoints(points,movePeriodMs,cyclePeriodMs);
+		}
+		if (choice == Button.ID_RIGHT) {	//plot TUHH
+			int letterClearance = 10;
+			int size = readSizeOfFigure(letterClearance);
+			int newClearance = size/5;
+			Point2D[] points = PlotFigures.logoTUHH(size, newClearance);
+			followPoints(points,movePeriodMs,cyclePeriodMs);
+		}
+//		Button.ENTER.waitForPressAndRelease();
+		pen.rotateTo(0);
+		arm.setSpeed(1000);
+		wheel.setSpeed(600);
+		arm.rotateTo(0,true);
+		wheel.rotateTo(0,true);
+		Button.ENTER.waitForPressAndRelease();
 	}
 	
 	static void setupPen() {
@@ -105,8 +98,8 @@ public class Plotbot {
 		MainDisplay.setupArm();
 		int buttonPressed = Button.waitForAnyPress();
 		Delay.msDelay(1000);
-		switch (buttonPressed) {
-		case Button.ID_ENTER: //if re-calibration is required
+		if  (buttonPressed == Button.ID_ENTER) {
+			//if re-calibration is required
 			MainDisplay.setupArmWait();
 			arm.setSpeed(1000);
 			arm.backward(); //turn right
@@ -122,19 +115,21 @@ public class Plotbot {
 					armIsCalibrated = true;
 				}
 			}); 
-		case Button.ID_ESCAPE: //if the arm is already at zero position, skip calibration
+		}
+		if  (buttonPressed == Button.ID_ESCAPE) { //if the arm is already at zero position, skip calibration
 			arm.resetTachoCount();
 			armIsCalibrated = true;
 		}
 		//update tacho readings every 500ms before calibration is done
-		while(!armIsCalibrated) {
-			MainDisplay.setReadings(0, arm.getTachoCount());
-			Delay.msDelay(500);
-		}
+//		while(!armIsCalibrated) {
+//			MainDisplay.setReadings(0, arm.getTachoCount());
+//			Delay.msDelay(500);
+//		}
 	}
 	
 	static void setupY() {
 		MainDisplay.setupLight();
+		lightSensor.setFloodlight(true);
 		if (Button.waitForAnyPress()==Button.ID_ESCAPE) {return;}
 		Delay.msDelay(1000);
 		while (Button.ENTER.isUp()){
@@ -153,16 +148,49 @@ public class Plotbot {
 		wheel.rotate(-300,true);
 		while (!yIsCalibrated) {
 			MainDisplay.setReadings(0, SensorPort.S3.readValue());
-			if (Math.abs(SensorPort.S3.readValue()-dark)>20) {
+			if (SensorPort.S3.readValue()-dark<2) {
 				wheel.stop();
-				wheel.resetTachoCount();
+				
 				yIsCalibrated = true;
 			}
 		}
+		lightSensor.setFloodlight(false);
+		wheel.rotate(300);
+		wheel.resetTachoCount();
 	}
 
-	static int readSizeOfFigure() {
-		return sizeDefault;
+	static int readSizeOfFigure(int letterClearance) {
+		MainDisplay.sizeOfFigures();
+		
+		int size = sizeDefault;
+		int newSizeMax = sizeMax - 2*letterClearance;
+		MainDisplay.setReadings(0, size);
+		boolean cont = true;
+		do {
+			int choice = Button.waitForAnyPress();
+			Delay.msDelay(1000);
+			if (choice == Button.ID_ENTER) {
+				cont = false;
+				MainDisplay.setReadingsString(1, "");
+			}
+			if (choice == Button.ID_LEFT) {
+				size = size - sizeStep;
+				if (size <= sizeMin) {
+					size = sizeMin;
+					MainDisplay.setReadingsString(1, "(min size)");
+				}
+				MainDisplay.setReadings(0, size);
+			}
+			if (choice == Button.ID_RIGHT) {
+				size = size + sizeStep;
+				if (size >= newSizeMax) {
+					size = newSizeMax;
+					MainDisplay.setReadingsString(1, "(max size)");
+				}
+				MainDisplay.setReadings(0, size);
+			}
+		} while (cont);
+		return size;
 	}
 	
 	static void followPoints(Point2D[] points,int movePeriodMs,int cyclePeriodMs) {
@@ -173,6 +201,7 @@ public class Plotbot {
 			Point2D[] awPath = Path.xy2aw(xyPath);
 			Point2D[] speedPath = Path.awSpeed(awPath, movePeriodMs);
 			if ( (arm.getTachoCount() != awPath[0].X) || (wheel.getTachoCount() != awPath[0].Y)) {
+				pen.setSpeed(600);
 				pen.rotateTo(penUp);
 				arm.setSpeed(1000);
 				wheel.setSpeed(500);

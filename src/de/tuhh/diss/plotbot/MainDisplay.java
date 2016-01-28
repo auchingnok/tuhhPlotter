@@ -62,6 +62,12 @@ public class MainDisplay { //size 0..15, 0..7
 		varReadings[index] = valst;
 		update();
 	}
+	
+	public static void setReadingsString (int index, String text){
+		 varReadings[index] = text;
+		 update();
+	}
+	
 
 	public static void setChosenOption(int choice) {
 		currentOptionId = choice;
@@ -148,34 +154,37 @@ public class MainDisplay { //size 0..15, 0..7
 
 	public static void plotMenu() {
 		reset();
-		header = new String[1];
-		options = new String[2];
+		header = new String[3];
+		options = new String[0];
 		userInputInfo = new String[2];
 		header[0] = "Plot Menu";
-		options[0] = "plot Rect";
-		options[1] = "plot TUHH";
-		userInputInfo[0] = "L,R: Scroll";
-		userInputInfo[1] = "ENT: Plot";
+		header[1] = "";
+		header[2] = "";
+		userInputInfo[0] = "L: plot Rect";
+		userInputInfo[1] = "R: plot TUHH";
 		update();
 	}
 	
 	//size menu
-	 public static void sizeOfFigures() {
-	 reset();
-	 header = new String[1];
-	 options = new String[0];
-	 varNames = new String[1];
-	 varReadings = new String[1];
-	 userInputInfo = new String[2];
-	 header[0] = "Size of Figure";
-	 header[1]= "";
-	 varNames[1] = "current size:";
-	 varReadings[1] = "Plotbot.sizeOfPlot";
-	 userInputInfo[0] = "";
-	 userInputInfo[1] = "L: decrease";
-	 userInputInfo[2] = "R: increase";
-	 userInputInfo[3] = "ENT: Plot";
-	 update();
-	 }
+	//size menu
+	public static void sizeOfFigures() {
+		reset();
+		header = new String[2];
+		options = new String[0];
+		varNames = new String[2];
+		varReadings = new String[2];
+		userInputInfo = new String[4];
+		header[0] = "Size of Figure";
+		header[1]= "";
+		varNames[0] = "size";
+		varNames[1] = "";
+		varReadings[0] = "";
+		varReadings[1] = "";
+		userInputInfo[0] = "";
+		userInputInfo[1] = "L: decrease";
+		userInputInfo[2] = "R: increase";
+		userInputInfo[3] = "ENT: Plot";
+		update();
+	}
 	 
 }
