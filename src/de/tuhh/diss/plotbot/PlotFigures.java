@@ -33,6 +33,27 @@ public class PlotFigures {
 
 		return logoTUHH;
 	}
+	
+	public static Point2D[] logoXYZ(double size, double space) {
+		double charWidth = 0.5 * size;
+
+		Point2D[] X = Letter.X(size,charWidth);
+		Point2D[] correctedT = shiftFigure(rotateFigure(X, 30), boardHeight-(1*space+0.5*charWidth));
+
+		Point2D[] Y = Letter.Y(size,charWidth);
+		Point2D[] correctedU = shiftFigure(rotateFigure(Y, 45), boardHeight-(2*space+1.5*charWidth));
+
+		Point2D[] Z = Letter.Z(size,charWidth);
+		Point2D[] correctedH1 = shiftFigure(rotateFigure(Z, 60), boardHeight-(3*space+2.5*charWidth));
+
+		int numOfTotalPoints = X.length + Y.length + Z.length;
+		Point2D[] logoTUHH = new Point2D[numOfTotalPoints];
+		System.arraycopy(correctedT, 0, logoTUHH, 0, X.length);
+		System.arraycopy(correctedU, 0, logoTUHH, X.length, Y.length);
+		System.arraycopy(correctedH1, 0, logoTUHH, X.length+Y.length, Z.length);
+
+		return logoTUHH;
+	}
 
 	public static Point2D[] plotT(double size, double charWidth) {
 		return new Point2D[]{Point2D.zero()};
