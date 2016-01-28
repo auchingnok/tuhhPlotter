@@ -162,28 +162,7 @@ public class Plotbot {
 	}
 
 	static int readSizeOfFigure() {
-		MainDisplay.sizeOfFigures();
-		int size=sizeDefault;
-		MainDisplay.setReadings(0, size);
-		boolean cont = true;
-		do {
-			int choice = Button.waitForAnyPress();
-			Delay.msDelay(1000);
-			if (choice == Button.ID_ENTER) {
-				cont = false;
-			}
-			if (choice == Button.ID_LEFT) {
-				size = size - sizeStep;
-				if (size < sizeMin) {size = sizeMin;}
-				MainDisplay.setReadings(0, size);
-			}
-			if (choice == Button.ID_RIGHT) {
-				size = size + sizeStep;
-				if (size > sizeMax) {size = sizeMax;}
-				MainDisplay.setReadings(0, size);
-			} 
-		} while (cont);
-		return size;
+		return sizeDefault;
 	}
 	
 	static void followPoints(Point2D[] points,int movePeriodMs,int cyclePeriodMs) {
@@ -217,4 +196,26 @@ public class Plotbot {
 		}
 	}
 	
+//	MainDisplay.sizeOfFigures();
+//	int size=sizeDefault;
+//	MainDisplay.setReadings(0, size);
+//	boolean cont = true;
+//	do {
+//		int choice = Button.waitForAnyPress();
+//		Delay.msDelay(1000);
+//		if (choice == Button.ID_ENTER) {
+//			cont = false;
+//		}
+//		if (choice == Button.ID_LEFT) {
+//			size = size - sizeStep;
+//			if (size < sizeMin) {size = sizeMin;}
+//			MainDisplay.setReadings(0, size);
+//		}
+//		if (choice == Button.ID_RIGHT) {
+//			size = size + sizeStep;
+//			if (size > sizeMax) {size = sizeMax;}
+//			MainDisplay.setReadings(0, size);
+//		} 
+//	} while (cont);
+//	return size;
 }
